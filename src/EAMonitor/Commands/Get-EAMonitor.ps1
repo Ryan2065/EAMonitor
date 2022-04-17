@@ -14,11 +14,11 @@ Function Get-EAMonitor{
         'ThenInclude' =  @('SettingKey', 'SettingEnvironment')
         'ToList' = $true
     }
-    if($PSCmdlet.ParameterSetName -eq 'Name' -and (-not $ScheduledToRunNow.IsPresent)){
+    if($PSCmdlet.ParameterSetName -eq 'Name' -and ($false -eq $ScheduledToRunNow)){
         return Search-EFPosh -Expression { $_.Name -eq $0 } -Arguments @(,$Name) @SearchEFPoshParams
     }
 
-    if($PSCmdlet.ParameterSetName -eq 'Name' -and $ScheduledToRunNow.IsPresent){
+    if($PSCmdlet.ParameterSetName -eq 'Name' -and $ScheduledToRunNow){
         $SearchEFPoshParams['Expression'] = { $_.Name -eq $0 -and $_.NextRun -le $1}
         $SearchEFPoshParams['Arguments'] = @(,$Name, [DateTime]::UtcNow) 
     }

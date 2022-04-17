@@ -1,8 +1,5 @@
-Class EAMonitorConfigItem{
-    [string]$Key
-    [string]$Value
-}
-Class EAMonitorObject{
+
+Class RegisteredEAMonitor{
     [string]$Name
     [string]$FilePath
     [object]$DbMonitorObject

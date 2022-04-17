@@ -8,7 +8,7 @@ Function Register-EAMonitor{
     begin{
         New-EAMonitorDbContext
         if($null -eq $Script:RegisteredMonitors){
-            $Script:RegisteredMonitors = New-Object System.Collections.Generic.List[EAMonitorObject]
+            $Script:RegisteredMonitors = New-Object System.Collections.Generic.List[RegisteredEAMonitor]
         }
     }
     process{
@@ -27,7 +27,7 @@ Function Register-EAMonitor{
             New-EAMonitor -Name $MonitorName -Path $Path
             $monObj = Get-EAMonitor -Name $MonitorName
         }
-        $registeredMonitor = [EAMonitorObject]::new()
+        $registeredMonitor = [RegisteredEAMonitor]::new()
         $registeredMonitor.Name = $MonitorName
         $registeredMonitor.FilePath = $Path
         $registeredMonitor.DbMonitorObject = $monObj
