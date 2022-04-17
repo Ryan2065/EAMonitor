@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <IsPackageable>false</IsPackageable>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+	<CopyLocalLockFileAssemblies Condition="'$(Configuration)'=='Debug'">true</CopyLocalLockFileAssemblies>
+  <SelfContained>False</SelfContained>
+	
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Compile Remove="Migrations\SQL\**" />
+    <EmbeddedResource Remove="Migrations\SQL\**" />
+    <None Remove="Migrations\SQL\**" />
+	<Compile Remove="Migrations\SQLite\**" />
+	<EmbeddedResource Remove="Migrations\SQLite\**" />
+	<None Remove="Migrations\SQLite\**" />
+  </ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<Compile Remove="Migrations\SQLNet47\**" />
+		<EmbeddedResource Remove="Migrations\SQLNet47\**" />
+		<None Remove="Migrations\SQLNet47\**" />
+		<Compile Remove="Migrations\SQLiteNet47\**" />
+		<EmbeddedResource Remove="Migrations\SQLiteNet47\**" />
+		<None Remove="Migrations\SQLiteNet47\**" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" Condition="'$(TargetFramework)' == 'net6.0'">
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.3" Condition="'$(TargetFramework)' == 'net6.0'">
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" Condition="'$(TargetFramework)' == 'net6.0'">
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3" Condition="'$(TargetFramework)' == 'net6.0'">
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+    
+     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+  	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'">
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+  </ItemGroup>
+
+</Project>

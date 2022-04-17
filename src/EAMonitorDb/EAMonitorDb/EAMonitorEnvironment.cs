@@ -1,0 +1,25 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.Collections.Generic;
+
+namespace EAMonitorDb
+{
+    public class EAMonitorEnvironment
+    {
+        public EAMonitorEnvironment()
+        {
+            Settings = new HashSet<EAMonitorSetting>();
+        }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        public string Name { get; set; }
+
+        [ForeignKey("SettingEnvironmentId")]
+        public ICollection<EAMonitorSetting> Settings { get; set; }
+    }
+}
