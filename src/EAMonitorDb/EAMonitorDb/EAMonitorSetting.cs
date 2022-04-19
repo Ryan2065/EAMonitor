@@ -16,15 +16,15 @@ namespace EAMonitorDb
         public int SettingKeyId { get; set; }
         public EAMonitorSettingKey SettingKey { get; set; }
 
-        [Required]
         [ForeignKey("Monitor")]
-        public Guid MonitorId { get; set; }
+        public Guid? MonitorId { get; set; }
         public EAMonitor Monitor { get; set; }
 
         [Required]
         public string SettingValue { get; set; }
 
-
+        [Required]
+        public DateTime LastModified { get; set; }
 
         [ForeignKey("SettingEnvironment")]
         public int? SettingEnvironmentId { get; set; }

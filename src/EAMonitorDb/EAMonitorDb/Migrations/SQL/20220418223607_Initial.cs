@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -64,7 +64,6 @@ namespace EAMonitorDb.Migrations.SQL
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    NextRun = table.Column<DateTime>(nullable: true),
                     LastModified = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     MonitorStateId = table.Column<int>(nullable: false)
@@ -196,6 +195,12 @@ namespace EAMonitorDb.Migrations.SQL
                 column: "MonitorStateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EAMonitor_Name",
+                table: "EAMonitor",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorJob_JobStatusId",
                 table: "EAMonitorJob",
                 column: "JobStatusId");
@@ -224,6 +229,31 @@ namespace EAMonitorDb.Migrations.SQL
                 name: "IX_EAMonitorSetting_SettingKeyId",
                 table: "EAMonitorSetting",
                 column: "SettingKeyId");
+            migrationBuilder.Sql(@"
+                CREATE OR ALTER VIEW v_EAMonitor AS
+                SELECT
+                    eaM.Id,
+                    eaM.Name,
+                    eaM.Description,
+                    eaM.LastModified,
+                    eaM.Created,
+                    eaMs.Name as ""MonitorState"",
+                    eaJobOuter.Created as ""LastJobCreatedAt"",
+                    eaJobOuter.LastModified as ""LastJobModifiedAt"",
+                    eaJobOuter.Completed as ""LastJobCompletedAt"",
+                    eaMJS.Name as ""LastJobStatus""
+                FROM EAMonitor eaM
+                OUTER APPLY (
+                    SELECT TOP 1 *
+                    FROM EAMonitorJob eaJob
+                    WHERE eaJob.MonitorId = eaM.Id
+                    ORDER BY eaJob.Created DESC
+                ) as eaJobOuter
+                JOIN EAMonitorState eaMs
+                    ON eaMs.Id = eaM.MonitorStateId
+                JOIN EAMonitorJobStatus eaMJS
+                    ON eaMJS.Id = eaJobOuter.JobStatusId
+            ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

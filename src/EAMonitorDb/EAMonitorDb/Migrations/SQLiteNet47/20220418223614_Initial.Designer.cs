@@ -3,23 +3,20 @@ using System;
 using EAMonitorDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EAMonitorDb.Migrations.SQLNet47
+namespace EAMonitorDb.Migrations.SQLiteNet47
 {
-    [DbContext(typeof(EAMonitorContextSQLNet47))]
-    [Migration("20220417154910_Initial")]
+    [DbContext(typeof(EAMonitorContextSqliteNet47))]
+    [Migration("20220418223614_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity("EAMonitorDb.EAMonitor", b =>
                 {
@@ -38,11 +35,12 @@ namespace EAMonitorDb.Migrations.SQLNet47
                         .IsRequired()
                         .HasMaxLength(128);
 
-                    b.Property<DateTime?>("NextRun");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MonitorStateId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("EAMonitor");
                 });
@@ -50,8 +48,7 @@ namespace EAMonitorDb.Migrations.SQLNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorEnvironment", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -135,8 +132,7 @@ namespace EAMonitorDb.Migrations.SQLNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorSetting", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("MonitorId");
 

@@ -1,7 +1,7 @@
 Function New-EAMonitor {
     Param(
         [string]$Name,
-        [string]$Path
+        [string]$Description
     )
 
     $newEAMonitorObj = New-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity EAMonitor
@@ -12,13 +12,9 @@ Function New-EAMonitor {
     $newEAMonitorObj.Created = $CurrentTime
 
     $newEAMonitorObj.MonitorStateId = (Get-EAMonitorState -StateName 'Unknown').Id
-    
-    $MonitorSettings = Get-EAMonitorLocalSettings -MonitorName $Name -Path $Path
-    if($null -ne $MonitorSettings){
-        $newEAMonitorObj.Description = $MonitorSettings.Description
-    }
-    
-    $newEAMonitorObj.NextRun = [DateTime]::UtcNow
+    $newEAMonitorObj.Description = $Description
 
-    Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $newEAMonitorObj -SaveChanges
+    Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $newEAMonitorObj
+
+    Save-EAMonitorContext
 }

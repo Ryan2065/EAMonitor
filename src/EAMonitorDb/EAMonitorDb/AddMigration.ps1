@@ -48,4 +48,67 @@ Rename-Item "$BasePath\Migrations\SqlNet47\$($SqlNet47MigrationName).cs" -NewNam
 Rename-Item "$BasePath\Migrations\SqliteNet47\$($SqliteNet47MigrationName).Designer.cs" -NewName "$($SqliteMigrationName).Designer.cs" -Force
 Rename-Item "$BasePath\Migrations\SqliteNet47\$($SqliteNet47MigrationName).cs" -NewName "$($SqliteMigrationName).cs"
 
+$SqlCSFiles = @(
+    "$BasePath\Migrations\SqlNet47\$($SqlMigrationName).cs",
+    "$BasePath\Migrations\Sql\$($SqlMigrationName).cs"
+)
+$SqliteCsFiles = @(
+    "$BasePath\Migrations\SqliteNet47\$($SqliteMigrationName).cs" ,
+    "$BasePath\Migrations\Sqlite\$($SqliteMigrationName).cs" 
+)
+
+#Add SQL files to SQL db
+Get-ChildItem "$PSScriptRoot\SqlFiles" -Filter '*.sql' | Foreach-Object {
+    $Content = Get-Content -Path $_.FullName
+    foreach($file in $SqlCSFiles){
+        $newFileContent = @()
+        $FileContent = Get-Content $File
+        for($i = 0; $i -lt $FileContent.Count  ;$i++){
+            $line = $FileContent[$i]
+            if(-not [string]::IsNullOrEmpty($line)){
+                try{
+                    if($line.Trim() -eq '}' -and $FileContent[$i+2].Trim() -eq 'protected override void Down(MigrationBuilder migrationBuilder)'){
+                        $newFileContent += '            migrationBuilder.Sql(@"'
+                        foreach($contentLine in $Content){
+                            $contentLine = $contentLine.Replace('"','""')
+                            $newFileContent += "                $contentLine"
+                        }
+                        $newFileContent += '            ");'
+                    }
+                }
+                catch{}
+            }
+            $newFileContent += $FileContent[$i]
+        }
+        ($newFileContent -Join [System.Environment]::NewLine) | Out-File $File -Force
+    }
+}
+
+#Add SQLite files to SQL db
+Get-ChildItem "$PSScriptRoot\SqliteFiles" -Filter '*.sql' | Foreach-Object {
+    $Content = Get-Content -Path $_.FullName
+    foreach($file in $SqliteCsFiles){
+        $newFileContent = @()
+        $FileContent = Get-Content $File
+        for($i = 0; $i -lt $FileContent.Count  ;$i++){
+            $line = $FileContent[$i]
+            if(-not [string]::IsNullOrEmpty($line)){
+                try{
+                    if($line.Trim() -eq '}' -and $FileContent[$i+2].Trim() -eq 'protected override void Down(MigrationBuilder migrationBuilder)'){
+                        $newFileContent += '            migrationBuilder.Sql(@"'
+                        foreach($contentLine in $Content){
+                            $contentLine = $contentLine.Replace('"','""')
+                            $newFileContent += "                $contentLine"
+                        }
+                        $newFileContent += '            ");'
+                    }
+                }
+                catch{}
+            }
+            $newFileContent += $FileContent[$i]
+        }
+        ($newFileContent -Join [System.Environment]::NewLine) | Out-File $File -Force
+    }
+}
+
 Pop-Location

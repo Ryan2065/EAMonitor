@@ -29,8 +29,17 @@ namespace EAMonitorDb
         public DbSet<EAMonitorSettingKey> EAMonitorSettingKey { get; set; }
         public DbSet<EAMonitorSetting> EAMonitorSetting { get; set; }
 
+#if NET472
+        public DbQuery<v_EAMonitor> v_EAMonitor { get; set; }
+#else
+        public DbSet<v_EAMonitor> v_EAMonitor { get; set; }
+#endif
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EAMonitor>().HasIndex(p => p.Name).IsUnique();
+
             modelBuilder.Entity<EAMonitorJobStatus>().HasData(
                 new EAMonitorJobStatus { Name = "Created", Id = 1 },
                 new EAMonitorJobStatus { Name = "InProgress", Id = 2 },
@@ -38,7 +47,7 @@ namespace EAMonitorDb
                 new EAMonitorJobStatus { Name = "Failed", Id = 4 },
                 new EAMonitorJobStatus { Name = "Cancelled", Id = 5 }
             );
-            modelBuilder.Entity<EAMonitorSettingKey>().HasData(
+            /*modelBuilder.Entity<EAMonitorSettingKey>().HasData(
                 new EAMonitorSettingKey { Name = "Schedule-RunTimespan", Id = 1 },
                 new EAMonitorSettingKey { Name = "Notify-Emails", Id = 2 },
                 new EAMonitorSettingKey { Name = "Notify-Repeat", Id = 3 },
@@ -49,15 +58,20 @@ namespace EAMonitorDb
                 new EAMonitorSettingKey { Name = "StateChange-UpToWarning", Id = 8 },
                 new EAMonitorSettingKey { Name = "StateChange-DownToWarning", Id = 9 },
                 new EAMonitorSettingKey { Name = "StateChange-DownToUp", Id = 10 }
-            );
+            );*/
             modelBuilder.Entity<EAMonitorState>().HasData(
                 new EAMonitorState { Name = "Unknown", Id = 1 },
                 new EAMonitorState { Name = "Up", Id = 2 },
                 new EAMonitorState { Name = "Down", Id = 3 },
                 new EAMonitorState { Name = "Warning", Id = 4 }
             );
-        }
+#if NET472
+            modelBuilder.Query<v_EAMonitor>().ToView("v_EAMonitor");
+#else
+            modelBuilder.Entity<v_EAMonitor>().ToView("v_EAMonitor").HasKey(p => p.Id);
+#endif
     }
+}
     public class EAMonitorContextSQL : EAMonitorContext
     {
         private string _conString;

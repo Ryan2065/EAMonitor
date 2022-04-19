@@ -20,10 +20,6 @@ namespace EAMonitorDb
         public string Name { get; set; }
 
         public string Description { get; set; }
-        /// <summary>
-        /// Next time the monitor is scheduled to run
-        /// </summary>
-        public DateTime? NextRun { get; set; }
 
         public DateTime LastModified { get; set; }
 

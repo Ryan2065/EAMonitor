@@ -1,12 +1,8 @@
 Function Get-EAMonitor{
     Param(
-        [Parameter(Mandatory=$true, ParameterSetName="Name")]
-        [Parameter(Mandatory=$false, ParameterSetName="Scheduled")]
+        [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Name,
-        [Parameter(Mandatory=$true, ParameterSetName="Scheduled")]
-        [Parameter(Mandatory=$false, ParameterSetName="Name")]
-        [switch]$ScheduledToRunNow
+        [string]$Name
     )
     $SearchEFPoshParams = @{
         'Entity' = $Script:EAMonitorDbContext.EAMonitor
@@ -14,17 +10,10 @@ Function Get-EAMonitor{
         'ThenInclude' =  @('SettingKey', 'SettingEnvironment')
         'ToList' = $true
     }
-    if($PSCmdlet.ParameterSetName -eq 'Name' -and ($false -eq $ScheduledToRunNow)){
+    if(-not ( [string]::IsNullOrEmpty($Name ))){
         return Search-EFPosh -Expression { $_.Name -eq $0 } -Arguments @(,$Name) @SearchEFPoshParams
     }
-
-    if($PSCmdlet.ParameterSetName -eq 'Name' -and $ScheduledToRunNow){
-        $SearchEFPoshParams['Expression'] = { $_.Name -eq $0 -and $_.NextRun -le $1}
-        $SearchEFPoshParams['Arguments'] = @(,$Name, [DateTime]::UtcNow) 
-    }
     else{
-        $SearchEFPoshParams['Expression'] = { $_.NextRun -le $0 }
-        $SearchEFPoshParams['Arguments'] = @(,[DateTime]::UtcNow) 
+        return Search-EFPosh @SearchEFPoshParams
     }
-    return Search-EFPosh @SearchEFPoshParams
 }

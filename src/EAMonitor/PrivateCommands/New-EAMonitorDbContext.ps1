@@ -19,7 +19,7 @@ Function New-EAMonitorDbContext{
     Param(
         [switch]$Force
     )
-    $RunNew = $Force.IsPresent
+    $RunNew = $true -eq $Force
     if($null -eq $Script:EAMonitorDbContext -and $null -ne $Script:efPoshDbContextParams){
         $RunNew = $true
     }

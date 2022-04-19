@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EAMonitorDb.Migrations.SQL
 {
     [DbContext(typeof(EAMonitorContextSQL))]
-    [Migration("20220417154910_Initial")]
+    [Migration("20220418223607_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,11 +38,12 @@ namespace EAMonitorDb.Migrations.SQL
                         .IsRequired()
                         .HasMaxLength(128);
 
-                    b.Property<DateTime?>("NextRun");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MonitorStateId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("EAMonitor");
                 });

@@ -14,6 +14,8 @@ if(Test-Path $LastBuildTimeFile -ErrorAction SilentlyContinue){
   try{
     $LastBuildTime = Get-Content $LastBuildTimeFile | ConvertFrom-JSON
     $MigrationFilesToCheck = Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb" -File
+    $MigrationFilesToCheck += Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\SqlFiles" -File
+    $MigrationFilesToCheck += Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\SqliteFiles" -File
     $FilesToCheck = Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\Migrations" -File -Recurse
     $RebuildBinaries = $false
     foreach($file in $FilesToCheck){
@@ -50,11 +52,16 @@ if($RebuildBinaries){
     [DateTime]::Now | ConvertTo-JSON | Out-File $LastBuildTimeFile -Force
 }
 
+$env:PSModulePath = $env:PSModulePath + ";C:\Users\Ryan2\OneDrive\Code\EFPosh\src\Module"
 
+$PublicCommands = (Get-ChildItem "$PSScriptRoot\EAMonitor\Commands" -Filter '*.ps1').BaseName
+Update-ModuleManifest -Path "$PSScriptRoot\EAMonitor\EAMonitor.psd1" -FunctionsToExport $PublicCommands
+
+#region test it out
 
 $VerbosePreference = 'Continue'
 $Global:DebugPreference = 'Continue'
-Import-Module "C:\Users\Ryan2\OneDrive\Code\EFPosh\src\Module\EFPosh" -Force 
+
 Import-Module "$PSScriptRoot\EAMonitor" -Force -Verbose:$false
 
 $binPath = [System.IO.Path]::Combine($PSScriptRoot, "bin")
@@ -69,6 +76,6 @@ $SqliteFile = [System.IO.Path]::Combine($binPath, 'EAMonitor.sqlite')
 
 Initialize-EAMonitor -SqliteFilePath $SqliteFile -CreateDb
 
-Register-EAMonitor -Path 'C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\FakeMonitor.tests.ps1'
+Import-EAMonitor -Path 'C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\FakeMonitor.tests.ps1'
 
 #$context = New-EFPoshContext -SQLiteFile  -AssemblyFile "C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\EAMonitor\Dependencies\net6.0\EAMonitorDb.dll" -ClassName 'EAMonitorContextSqlite' -EnsureCreated

@@ -36,11 +36,12 @@ namespace EAMonitorDb.Migrations.SQLNet47
                         .IsRequired()
                         .HasMaxLength(128);
 
-                    b.Property<DateTime?>("NextRun");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MonitorStateId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("EAMonitor");
                 });

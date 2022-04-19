@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EAMonitorDb.Migrations.SQLiteNet47
+namespace EAMonitorDb.Migrations.SQLite
 {
     public partial class Initial : Migration
     {
@@ -63,7 +63,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    NextRun = table.Column<DateTime>(nullable: true),
                     LastModified = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     MonitorStateId = table.Column<int>(nullable: false)
@@ -250,6 +249,12 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 column: "MonitorStateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EAMonitor_Name",
+                table: "EAMonitor",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorJob_JobStatusId",
                 table: "EAMonitorJob",
                 column: "JobStatusId");
@@ -278,6 +283,33 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 name: "IX_EAMonitorSetting_SettingKeyId",
                 table: "EAMonitorSetting",
                 column: "SettingKeyId");
+            migrationBuilder.Sql(@"
+                CREATE VIEW v_EAMonitor AS
+                SELECT
+                    eaM.Id,
+                    eaM.Name,
+                    eaM.Description,
+                    eaM.LastModified,
+                    eaM.Created,
+                    eaMs.Name as ""MonitorState"",
+                    eaJob.Created as ""LastJobCreatedAt"",
+                    eaJob.LastModified as ""LastJobModifiedAt"",
+                    eaJob.Completed as ""LastJobCompletedAt"",
+                    eaMJS.Name as ""LastJobStatus""
+                FROM EAMonitor eaM
+                LEFT JOIN EAMonitorJob eaJob
+                    ON eaJob.Id = (
+                        SELECT Id
+                        FROM EAMonitorJob
+                        WHERE MonitorId = eam.Id
+                        ORDER BY Created DESC
+                        LIMIT 1
+                    )
+                JOIN EAMonitorState eaMs
+                    ON eaMs.Id = eaM.MonitorStateId
+                JOIN EAMonitorJobStatus eaMJS
+                    ON eaMJS.Id = eaJob.JobStatusId
+            ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -2,23 +2,33 @@ Function Start-EAMonitor {
     Param(
         [Parameter(Mandatory = $false)]
         [string]$Name,
+        [Parameter(Mandatory = $false)]
         [switch]$SkipSchedule
     )
-    $EAMonitorParam = @{}
-    if(-not [string]::IsNullOrWhiteSpace($Name)){
-        $EAMonitorParam['Name'] = $Name
-    }
-    if($SkipSchedule.IsPresent){
-        $EAMonitorParam['ScheduledToRunNow'] = $false
-    }
-    $MonitorsScheduledToRun = Get-EAMonitor @EAMonitorParam
-    $MonitorsScheduledToRunNames = $MonitorsScheduledToRun.Name
+    begin{
+        $MonitorsToRun = $Script:ImportedMonitors
 
-    $RegisteredMonitorsToRun = New-Object System.Collections.Generic.List[RegisteredEAMonitor]
-
-    foreach($monitor in $Script:RegisteredMonitors){
-        if($MonitorsScheduledToRunNames -contains $monitor.Name){
-            $RegisteredMonitorsToRun.Add($monitor)
+        $SearchEFPoshParams = @{
+            'Entity' = $Script:EAMonitorDbContext.EAMonitor
+            'Include' =  @('Settings','Settings')
+            'ThenInclude' =  @('SettingKey', 'SettingEnvironment')
+            'ToList' = $true
         }
+
+        if(-not [string]::IsNullOrWhiteSpace($Name)){
+            $SearchEFPoshParams['Expression'] = { $_.Name -eq $0 }
+            $SearchEFPoshParams['Arguments'] = @(,$Name)
+            foreach($mon in $Script:ImportedMonitors){
+                if($mon.Name -eq $Name){
+                    $MonitorsToRun = $mon
+                }
+            }
+        }
+
+        $RegisteredMonitorsToRun = New-Object System.Collections.Generic.List[RegisteredEAMonitor]
     }
+    process{
+        $MonitorDbRecords = Search-EFPosh @SearchEFPoshParams
+    }
+    end{}
 }

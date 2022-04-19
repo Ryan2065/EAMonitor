@@ -21,7 +21,11 @@ Function Initialize-EAMonitor{
         [Parameter(Mandatory = $false, ParameterSetName = "ConnectionString")]
         [Parameter(Mandatory = $false, ParameterSetName = "Sql")]
         [Parameter(Mandatory = $false, ParameterSetName = "Sqlite")]
-        [switch]$CreateDb
+        [switch]$CreateDb,
+        [Parameter(Mandatory = $false, ParameterSetName = "ConnectionString")]
+        [Parameter(Mandatory = $false, ParameterSetName = "Sql")]
+        [Parameter(Mandatory = $false, ParameterSetName = "Sqlite")]
+        [string]$Environment
     )
     begin{
         $Script:efPoshDbContextParams = @{
@@ -40,6 +44,10 @@ Function Initialize-EAMonitor{
         }
         else{
             $Script:efPoshDbContextParams['AssemblyFile'] = [System.IO.Path]::Combine($ParentDirectory.FullName, "Dependencies", "net472", "EAMonitorDb.dll")
+        }
+
+        if($Environment){
+            $Script:EAMonitorEnvironment = Register-EAMonitorEnvironment -Name $Environment
         }
         
         if($PSCmdlet.ParameterSetName -eq 'Sqlite'){
