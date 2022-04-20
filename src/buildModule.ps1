@@ -75,7 +75,9 @@ foreach($file in Get-ChildItem $binPath -File){
 $SqliteFile = [System.IO.Path]::Combine($binPath, 'EAMonitor.sqlite')
 
 Initialize-EAMonitor -SqliteFilePath $SqliteFile -CreateDb
-
+write-host 'importing'
 Import-EAMonitor -Path 'C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\FakeMonitor.tests.ps1'
-
+write-host 'setting'
+Set-EAMonitorSetting -SettingKey 'TestKey' -Value 'MyValue2'
+Get-EAMonitorSetting
 #$context = New-EFPoshContext -SQLiteFile  -AssemblyFile "C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\EAMonitor\Dependencies\net6.0\EAMonitorDb.dll" -ClassName 'EAMonitorContextSqlite' -EnsureCreated
