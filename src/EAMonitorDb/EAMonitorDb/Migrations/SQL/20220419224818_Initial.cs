@@ -122,8 +122,9 @@ namespace EAMonitorDb.Migrations.SQL
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SettingKeyId = table.Column<int>(nullable: false),
-                    MonitorId = table.Column<Guid>(nullable: false),
+                    MonitorId = table.Column<Guid>(nullable: true),
                     SettingValue = table.Column<string>(nullable: false),
+                    LastModified = table.Column<DateTime>(nullable: false),
                     SettingEnvironmentId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -134,7 +135,7 @@ namespace EAMonitorDb.Migrations.SQL
                         column: x => x.MonitorId,
                         principalTable: "EAMonitor",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EAMonitorSetting_EAMonitorEnvironment_SettingEnvironmentId",
                         column: x => x.SettingEnvironmentId,
@@ -159,23 +160,6 @@ namespace EAMonitorDb.Migrations.SQL
                     { 3, "Completed" },
                     { 4, "Failed" },
                     { 5, "Cancelled" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 10, "StateChange-DownToUp" },
-                    { 9, "StateChange-DownToWarning" },
-                    { 8, "StateChange-UpToWarning" },
-                    { 7, "StateChange-UpToDown" },
-                    { 6, "Tags" },
-                    { 5, "Schedule-CRONExpression" },
-                    { 4, "Enabled" },
-                    { 3, "Notify-Repeat" },
-                    { 2, "Notify-Emails" },
-                    { 1, "Schedule-RunTimespan" }
                 });
 
             migrationBuilder.InsertData(

@@ -121,8 +121,9 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SettingKeyId = table.Column<int>(nullable: false),
-                    MonitorId = table.Column<Guid>(nullable: false),
+                    MonitorId = table.Column<Guid>(nullable: true),
                     SettingValue = table.Column<string>(nullable: false),
+                    LastModified = table.Column<DateTime>(nullable: false),
                     SettingEnvironmentId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -133,7 +134,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                         column: x => x.MonitorId,
                         principalTable: "EAMonitor",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EAMonitorSetting_EAMonitorEnvironment_SettingEnvironmentId",
                         column: x => x.SettingEnvironmentId,
@@ -172,56 +173,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 table: "EAMonitorJobStatus",
                 columns: new[] { "Id", "Name" },
                 values: new object[] { 5, "Cancelled" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 10, "StateChange-DownToUp" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 9, "StateChange-DownToWarning" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 8, "StateChange-UpToWarning" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 7, "StateChange-UpToDown" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 6, "Tags" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 5, "Schedule-CRONExpression" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "Enabled" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Notify-Repeat" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Notify-Emails" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorSettingKey",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Schedule-RunTimespan" });
 
             migrationBuilder.InsertData(
                 table: "EAMonitorState",

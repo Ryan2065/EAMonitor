@@ -53,7 +53,11 @@ Function Set-EAMonitorSetting{
     }
 
     #If monitor name provided - get the object or create it in the db
-    $MonitorObject = Register-EAMonitor -Name $MonitorName
+    $MonitorObject = $null
+    if(-not [string]::IsNullOrEmpty($MonitorName)){
+        $MonitorObject = Register-EAMonitor -Name $MonitorName
+    }
+    
 
     #get the setting key or create it in the db
     $SettingKeyObject = Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorSettingKey -Expression { $_.Name -eq $0 } -Arguments @(,$SettingKey) -FirstOrDefault

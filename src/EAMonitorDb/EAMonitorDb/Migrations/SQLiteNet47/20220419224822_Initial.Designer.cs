@@ -3,23 +3,20 @@ using System;
 using EAMonitorDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EAMonitorDb.Migrations.SQLNet47
+namespace EAMonitorDb.Migrations.SQLiteNet47
 {
-    [DbContext(typeof(EAMonitorContextSQLNet47))]
-    [Migration("20220418223607_Initial")]
+    [DbContext(typeof(EAMonitorContextSqliteNet47))]
+    [Migration("20220419224822_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity("EAMonitorDb.EAMonitor", b =>
                 {
@@ -51,8 +48,7 @@ namespace EAMonitorDb.Migrations.SQLNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorEnvironment", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -136,10 +132,11 @@ namespace EAMonitorDb.Migrations.SQLNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorSetting", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("MonitorId");
+                    b.Property<DateTime>("LastModified");
+
+                    b.Property<Guid?>("MonitorId");
 
                     b.Property<int?>("SettingEnvironmentId");
 
@@ -170,58 +167,6 @@ namespace EAMonitorDb.Migrations.SQLNet47
                     b.HasKey("Id");
 
                     b.ToTable("EAMonitorSettingKey");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Schedule-RunTimespan"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Notify-Emails"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Notify-Repeat"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Enabled"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Schedule-CRONExpression"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Tags"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "StateChange-UpToDown"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "StateChange-UpToWarning"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "StateChange-DownToWarning"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "StateChange-DownToUp"
-                        });
                 });
 
             modelBuilder.Entity("EAMonitorDb.EAMonitorState", b =>
@@ -289,8 +234,7 @@ namespace EAMonitorDb.Migrations.SQLNet47
                 {
                     b.HasOne("EAMonitorDb.EAMonitor", "Monitor")
                         .WithMany("Settings")
-                        .HasForeignKey("MonitorId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("MonitorId");
 
                     b.HasOne("EAMonitorDb.EAMonitorEnvironment", "SettingEnvironment")
                         .WithMany("Settings")
