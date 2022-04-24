@@ -3,20 +3,23 @@ using System;
 using EAMonitorDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EAMonitorDb.Migrations.SQLiteNet47
+namespace EAMonitorDb.Migrations.SQLNet47
 {
-    [DbContext(typeof(EAMonitorContextSqliteNet47))]
-    [Migration("20220422184431_Initial")]
+    [DbContext(typeof(EAMonitorContextSQLNet47))]
+    [Migration("20220424161240_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EAMonitorDb.EAMonitor", b =>
                 {
@@ -48,7 +51,8 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorEnvironment", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -129,10 +133,33 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                         });
                 });
 
+            modelBuilder.Entity("EAMonitorDb.EAMonitorJobTest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime?>("ExecutedAt");
+
+                    b.Property<Guid>("JobId");
+
+                    b.Property<bool>("Passed");
+
+                    b.Property<string>("TestExpandedPath");
+
+                    b.Property<string>("TestPath");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("EAMonitorJobTest");
+                });
+
             modelBuilder.Entity("EAMonitorDb.EAMonitorSetting", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("LastModified");
 
@@ -159,7 +186,8 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorSettingKey", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -228,6 +256,14 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     b.HasOne("EAMonitorDb.EAMonitorState", "State")
                         .WithMany("Jobs")
                         .HasForeignKey("MonitorStateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("EAMonitorDb.EAMonitorJobTest", b =>
+                {
+                    b.HasOne("EAMonitorDb.EAMonitorJob", "Job")
+                        .WithMany("Tests")
+                        .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

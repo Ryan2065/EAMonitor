@@ -127,6 +127,28 @@ namespace EAMonitorDb.Migrations.SQLite
                         });
                 });
 
+            modelBuilder.Entity("EAMonitorDb.EAMonitorJobTest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime?>("ExecutedAt");
+
+                    b.Property<Guid>("JobId");
+
+                    b.Property<bool>("Passed");
+
+                    b.Property<string>("TestExpandedPath");
+
+                    b.Property<string>("TestPath");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("EAMonitorJobTest");
+                });
+
             modelBuilder.Entity("EAMonitorDb.EAMonitorSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -226,6 +248,14 @@ namespace EAMonitorDb.Migrations.SQLite
                     b.HasOne("EAMonitorDb.EAMonitorState", "State")
                         .WithMany("Jobs")
                         .HasForeignKey("MonitorStateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("EAMonitorDb.EAMonitorJobTest", b =>
+                {
+                    b.HasOne("EAMonitorDb.EAMonitorJob", "Job")
+                        .WithMany("Tests")
+                        .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

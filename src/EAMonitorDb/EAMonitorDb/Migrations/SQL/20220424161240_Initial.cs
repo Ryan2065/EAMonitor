@@ -151,6 +151,28 @@ namespace EAMonitorDb.Migrations.SQL
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EAMonitorJobTest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    JobId = table.Column<Guid>(nullable: false),
+                    TestPath = table.Column<string>(nullable: true),
+                    TestExpandedPath = table.Column<string>(nullable: true),
+                    Passed = table.Column<bool>(nullable: false),
+                    ExecutedAt = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EAMonitorJobTest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EAMonitorJobTest_EAMonitorJob_JobId",
+                        column: x => x.JobId,
+                        principalTable: "EAMonitorJob",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "EAMonitorJobStatus",
                 columns: new[] { "Id", "Name" },
@@ -201,6 +223,11 @@ namespace EAMonitorDb.Migrations.SQL
                 column: "MonitorStateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EAMonitorJobTest_JobId",
+                table: "EAMonitorJobTest",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorSetting_MonitorId",
                 table: "EAMonitorSetting",
                 column: "MonitorId");
@@ -244,22 +271,25 @@ namespace EAMonitorDb.Migrations.SQL
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EAMonitorJob");
+                name: "EAMonitorJobTest");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorSetting");
 
             migrationBuilder.DropTable(
-                name: "EAMonitorJobStatus");
-
-            migrationBuilder.DropTable(
-                name: "EAMonitor");
+                name: "EAMonitorJob");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorEnvironment");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorSettingKey");
+
+            migrationBuilder.DropTable(
+                name: "EAMonitorJobStatus");
+
+            migrationBuilder.DropTable(
+                name: "EAMonitor");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorState");

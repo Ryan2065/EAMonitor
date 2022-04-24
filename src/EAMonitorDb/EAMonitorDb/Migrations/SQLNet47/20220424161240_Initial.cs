@@ -1,7 +1,8 @@
 using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EAMonitorDb.Migrations.SQLiteNet47
+namespace EAMonitorDb.Migrations.SQLNet47
 {
     public partial class Initial : Migration
     {
@@ -12,7 +13,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -37,7 +38,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -120,7 +121,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SettingKeyId = table.Column<int>(nullable: false),
                     MonitorId = table.Column<Guid>(nullable: true),
                     SettingValue = table.Column<string>(nullable: false),
@@ -150,50 +151,50 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "EAMonitorJobStatus",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Created" });
+            migrationBuilder.CreateTable(
+                name: "EAMonitorJobTest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    JobId = table.Column<Guid>(nullable: false),
+                    TestPath = table.Column<string>(nullable: true),
+                    TestExpandedPath = table.Column<string>(nullable: true),
+                    Passed = table.Column<bool>(nullable: false),
+                    ExecutedAt = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EAMonitorJobTest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EAMonitorJobTest_EAMonitorJob_JobId",
+                        column: x => x.JobId,
+                        principalTable: "EAMonitorJob",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "EAMonitorJobStatus",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "InProgress" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorJobStatus",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Completed" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorJobStatus",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "Failed" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorJobStatus",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 5, "Cancelled" });
+                values: new object[,]
+                {
+                    { 1, "Created" },
+                    { 2, "InProgress" },
+                    { 3, "Completed" },
+                    { 4, "Failed" },
+                    { 5, "Cancelled" }
+                });
 
             migrationBuilder.InsertData(
                 table: "EAMonitorState",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Unknown" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorState",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Up" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorState",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Down" });
-
-            migrationBuilder.InsertData(
-                table: "EAMonitorState",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "Warning" });
+                values: new object[,]
+                {
+                    { 1, "Unknown" },
+                    { 2, "Up" },
+                    { 3, "Down" },
+                    { 4, "Warning" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EAMonitor_MonitorStateId",
@@ -222,6 +223,11 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 column: "MonitorStateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EAMonitorJobTest_JobId",
+                table: "EAMonitorJobTest",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorSetting_MonitorId",
                 table: "EAMonitorSetting",
                 column: "MonitorId");
@@ -236,7 +242,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 table: "EAMonitorSetting",
                 column: "SettingKeyId");
             migrationBuilder.Sql(@"
-                CREATE VIEW v_EAMonitor AS
+                CREATE OR ALTER VIEW v_EAMonitor AS
                 SELECT
                     eaM.Id,
                     eaM.Name,
@@ -244,45 +250,46 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     eaM.LastModified,
                     eaM.Created,
                     eaMs.Name as ""MonitorState"",
-                    eaJob.Created as ""LastJobCreatedAt"",
-                    eaJob.LastModified as ""LastJobModifiedAt"",
-                    eaJob.Completed as ""LastJobCompletedAt"",
+                    eaJobOuter.Created as ""LastJobCreatedAt"",
+                    eaJobOuter.LastModified as ""LastJobModifiedAt"",
+                    eaJobOuter.Completed as ""LastJobCompletedAt"",
                     eaMJS.Name as ""LastJobStatus""
                 FROM EAMonitor eaM
-                LEFT JOIN EAMonitorJob eaJob
-                    ON eaJob.Id = (
-                        SELECT Id
-                        FROM EAMonitorJob
-                        WHERE MonitorId = eam.Id
-                        ORDER BY Created DESC
-                        LIMIT 1
-                    )
+                OUTER APPLY (
+                    SELECT TOP 1 *
+                    FROM EAMonitorJob eaJob
+                    WHERE eaJob.MonitorId = eaM.Id
+                    ORDER BY eaJob.Created DESC
+                ) as eaJobOuter
                 JOIN EAMonitorState eaMs
                     ON eaMs.Id = eaM.MonitorStateId
                 JOIN EAMonitorJobStatus eaMJS
-                    ON eaMJS.Id = eaJob.JobStatusId
+                    ON eaMJS.Id = eaJobOuter.JobStatusId
             ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EAMonitorJob");
+                name: "EAMonitorJobTest");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorSetting");
 
             migrationBuilder.DropTable(
-                name: "EAMonitorJobStatus");
-
-            migrationBuilder.DropTable(
-                name: "EAMonitor");
+                name: "EAMonitorJob");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorEnvironment");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorSettingKey");
+
+            migrationBuilder.DropTable(
+                name: "EAMonitorJobStatus");
+
+            migrationBuilder.DropTable(
+                name: "EAMonitor");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorState");

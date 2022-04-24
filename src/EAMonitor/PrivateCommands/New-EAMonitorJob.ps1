@@ -11,10 +11,8 @@ Function New-EAMonitorJob{
         $CurrentTime = [DateTime]::UtcNow
         $newEAJobObj.LastModified = $CurrentTime
         $newEAJobObj.Created = $CurrentTime
-    
         $newEAJobObj.Notified = $false
-        $newEAJobObj.MonitorStateId = (Get-EAMonitorState -Name 'Unknown').Id
-    
+        $newEAJobObj.MonitorStateId = (Get-EAMonitorState -StateName 'Unknown').Id
         Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $newEAJobObj
         
         $Jobs += $newEAJobObj

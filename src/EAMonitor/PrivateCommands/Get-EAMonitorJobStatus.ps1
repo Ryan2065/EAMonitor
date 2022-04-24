@@ -12,7 +12,7 @@ Function Get-EAMonitorJobStatus{
     }
     foreach($s in $jobStatuses){
         if($s.Name -eq $Name){
-            return $s.Name
+            return $s
         }
     }
 }
