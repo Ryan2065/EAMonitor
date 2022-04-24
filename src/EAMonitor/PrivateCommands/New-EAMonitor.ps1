@@ -18,3 +18,4 @@ Function New-EAMonitor {
 
     Save-EAMonitorContext
 }
+

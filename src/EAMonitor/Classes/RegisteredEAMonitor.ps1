@@ -3,16 +3,23 @@ Class RegisteredEAMonitor{
     [string]$Name
     [string]$FilePath
     [string]$Directory
-    [string]$Module
     [object]$DbMonitorObject
-    [HashTable]$LocalSettings
-    [Hashtable]$LocalEnvironmentSettings
-    RegisteredEAMonitor([string]$Path, [string]$FromModule){
+    RegisteredEAMonitor([string]$Path){
+        
         $this.FilePath = $path
         $FileObj = Get-Item $Path
-        $this.Name = $FileObj.BaseName -replace '.tests.ps1',''
+        $monName = $FileObj.BaseName -replace '.tests',''
+        $this.Name = $monName
         $this.Directory = $FileObj.Directory.FullName
-        $this.Module = $FromModule
+        $localSettings = $this.GetLocalSettings()
+        $Description = $localSettings['Description']
+        if(-not [string]::IsNullOrEmpty($monName)){
+            $this.DbMonitorObject = Register-EAMonitor -MonitorName $monName -Description $Description
+        }
+        else{
+            Write-Warning "Could not find a name for monitor $($path)"
+        }
+        
     }
     [HashTable]GetLocalSettings(){
         $returnHash = @{}

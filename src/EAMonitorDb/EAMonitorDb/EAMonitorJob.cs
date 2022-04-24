@@ -10,6 +10,10 @@ namespace EAMonitorDb
 {
     public class EAMonitorJob
     {
+        public EAMonitorJob()
+        {
+            Tests = new HashSet<EAMonitorJobTest>();
+        }
         [Key]
         public Guid Id { get; set; }
 
@@ -32,7 +36,10 @@ namespace EAMonitorDb
         [ForeignKey("State")]
         [Required]
         public int MonitorStateId { get; set; }
-        public EAMonitorState State { get; set; } 
+        public EAMonitorState State { get; set; }
+
+        [ForeignKey("JobId")]
+        public ICollection<EAMonitorJobTest> Tests { get; set; }
 
 
     }

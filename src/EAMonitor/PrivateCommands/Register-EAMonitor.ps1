@@ -1,7 +1,7 @@
 Function Register-EAMonitor{
     [CmdletBinding()]
     param(
-        [string]$Name,
+        [string]$MonitorName,
         [string]$Description
     )
     $MonitorObject = Get-EAMonitor -Name $MonitorName

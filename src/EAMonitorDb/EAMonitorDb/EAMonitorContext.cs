@@ -28,6 +28,7 @@ namespace EAMonitorDb
         public DbSet<EAMonitorEnvironment> EAMonitorEnvironment { get; set; }
         public DbSet<EAMonitorSettingKey> EAMonitorSettingKey { get; set; }
         public DbSet<EAMonitorSetting> EAMonitorSetting { get; set; }
+        public DbSet<EAMonitorJobTest> EAMonitorJobTest { get; set; }
 
 #if NET472
         public DbQuery<v_EAMonitor> v_EAMonitor { get; set; }
@@ -70,6 +71,7 @@ namespace EAMonitorDb
 #else
             modelBuilder.Entity<v_EAMonitor>().ToView("v_EAMonitor").HasKey(p => p.Id);
 #endif
+            
     }
 }
     public class EAMonitorContextSQL : EAMonitorContext

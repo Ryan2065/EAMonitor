@@ -29,14 +29,11 @@ Function Initialize-EAMonitor{
     )
     begin{
         $Script:efPoshDbContextParams = @{
-            'EnsureCreated' = $CreateDb.IsPresent
-            'RunMigrations' = $CreateDb.IsPresent
+            'EnsureCreated' = $true -eq $CreateDb
+            'RunMigrations' = $true -eq $CreateDb
         }
         $ParentDirectory = (Get-Item $PSScriptRoot).Parent
         $ModulesToImport = @()
-        if($DetectMonitorModules.IsPresent){
-            $ModulesToImport = Get-Module -Name 'EAMonitor-*' -ListAvailable
-        }
     }
     Process{
         if($PSVersionTable.PSVersion.Major -gt 5){
@@ -82,6 +79,11 @@ Function Initialize-EAMonitor{
         }
     }
     end{
-        
+        if($DetectMonitorModules){
+            $ModulesToImport = Get-Module -Name 'EAMonitor-*' -ListAvailable
+            foreach($module in $ModulesToImport){
+                Import-Module $Module.Name -Force
+            }
+        }
     }
 }

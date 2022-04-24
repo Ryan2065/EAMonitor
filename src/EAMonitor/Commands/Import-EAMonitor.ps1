@@ -3,10 +3,7 @@ Function Import-EAMonitor{
     Param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Path,
-        [Parameter(Mandatory=$false)]
-        [ValidateNotNullOrEmpty()]
-        [string]$FromModule
+        [string]$Path
     )
     begin{
         New-EAMonitorDbContext
@@ -23,7 +20,7 @@ Function Import-EAMonitor{
             throw [System.Management.Automation.PSNotSupportedException] "Could not find the file path $($path)"
             return
         }
-        $Script:ImportedMonitors.Add([RegisteredEAMonitor]::new($Path, $FromModule))
+        $Script:ImportedMonitors.Add([RegisteredEAMonitor]::new($Path))
     }
     end{
 

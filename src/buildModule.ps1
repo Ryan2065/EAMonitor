@@ -58,26 +58,3 @@ $PublicCommands = (Get-ChildItem "$PSScriptRoot\EAMonitor\Commands" -Filter '*.p
 Update-ModuleManifest -Path "$PSScriptRoot\EAMonitor\EAMonitor.psd1" -FunctionsToExport $PublicCommands
 
 #region test it out
-
-$VerbosePreference = 'Continue'
-$Global:DebugPreference = 'Continue'
-
-Import-Module "$PSScriptRoot\EAMonitor" -Force -Verbose:$false
-
-$binPath = [System.IO.Path]::Combine($PSScriptRoot, "bin")
-if(-not (Test-Path $binPath -ErrorAction SilentlyContinue)){
-    $null = New-Item -ItemType Directory -Path $binPath -Force
-}
-foreach($file in Get-ChildItem $binPath -File){
-    $null = Remove-Item $file.FullName -Force
-}
-
-$SqliteFile = [System.IO.Path]::Combine($binPath, 'EAMonitor.sqlite')
-
-Initialize-EAMonitor -SqliteFilePath $SqliteFile -CreateDb
-write-host 'importing'
-Import-EAMonitor -Path 'C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\FakeMonitor.tests.ps1'
-write-host 'setting'
-Set-EAMonitorSetting -SettingKey 'TestKey' -Value 'MyValue2'
-Get-EAMonitorSetting
-#$context = New-EFPoshContext -SQLiteFile  -AssemblyFile "C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\EAMonitor\Dependencies\net6.0\EAMonitorDb.dll" -ClassName 'EAMonitorContextSqlite' -EnsureCreated

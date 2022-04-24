@@ -55,7 +55,7 @@ Function Set-EAMonitorSetting{
     #If monitor name provided - get the object or create it in the db
     $MonitorObject = $null
     if(-not [string]::IsNullOrEmpty($MonitorName)){
-        $MonitorObject = Register-EAMonitor -Name $MonitorName
+        $MonitorObject = Register-EAMonitor -MonitorName $MonitorName
     }
     
 

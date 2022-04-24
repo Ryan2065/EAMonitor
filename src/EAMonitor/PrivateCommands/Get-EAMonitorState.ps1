@@ -4,10 +4,10 @@ Function Get-EAMonitorState{
         [ValidateSet('Unknown', 'Up', 'Down', 'Warning')]
         [string]$StateName
     )
-    if($null -eq $Script:EAMonitorStates){
-        $Script:EAMonitorStates = Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorState
+    $monitorStates = Get-EAMonitorCachedData -Name 'MonitorStates' -ActiveFor ( New-TimeSpan -Minutes 20 ) -ScriptBlock {
+        Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorState -ToList
     }
-    foreach($state in $Script:EAMonitorStates){
+    foreach($state in $monitorStates){
         if($state.Name -eq $StateName){ return $state }
     }
 }

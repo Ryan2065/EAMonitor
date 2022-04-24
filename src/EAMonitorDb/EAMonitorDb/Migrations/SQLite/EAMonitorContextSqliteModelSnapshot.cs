@@ -156,7 +156,8 @@ namespace EAMonitorDb.Migrations.SQLite
 
             modelBuilder.Entity("EAMonitorDb.EAMonitorSettingKey", b =>
                 {
-                    b.Property<int>("Id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name")
                         .IsRequired()

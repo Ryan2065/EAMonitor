@@ -21,5 +21,6 @@ namespace EAMonitorDb
         public DateTime? LastJobModifiedAt { get; set; }
         public DateTime? LastJobCompletedAt { get; set; }
         public string LastJobStatus { get; set; }
+
     }
 }

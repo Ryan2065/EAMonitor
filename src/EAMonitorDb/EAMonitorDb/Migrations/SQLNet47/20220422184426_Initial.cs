@@ -2,7 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EAMonitorDb.Migrations.SQL
+namespace EAMonitorDb.Migrations.SQLNet47
 {
     public partial class Initial : Migration
     {
@@ -37,7 +37,8 @@ namespace EAMonitorDb.Migrations.SQL
                 name: "EAMonitorSettingKey",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>

@@ -36,7 +36,8 @@ namespace EAMonitorDb.Migrations.SQLite
                 name: "EAMonitorSettingKey",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>

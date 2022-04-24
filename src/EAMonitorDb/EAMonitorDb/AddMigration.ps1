@@ -8,7 +8,7 @@ Push-Location $PSScriptRoot
 if($RemovePrevious){
     #If only one migration, can just nuke the migration folder
     try{
-        $NumberOfMigrations = ((Get-ChildItem "$PSScriptRoot\Migrations\Sql" -Filter "*.cs").Count - 1) / 2
+        $NumberOfMigrations = ((Get-ChildItem "$PSScriptRoot\Migrations\Sql" -Filter "*.cs" -ErrorAction SilentlyContinue).Count - 1) / 2
         if($NumberOfMigrations -eq 1){
             $null = Remove-Item "$PSScriptRoot\Migrations" -Force -Recurse
         }
@@ -16,7 +16,7 @@ if($RemovePrevious){
     catch{
         throw
     }
-    if(Test-Path "$PSScriptRoot\Migrations\SQL\EAMonitorContextSQLModelSnapshot.cs"){
+    if(Test-Path "$PSScriptRoot\Migrations\SQL\EAMonitorContextSQLModelSnapshot.cs" -ErrorAction SilentlyContinue){
         dotnet build --runtime net6.0 --no-self-contained
         dotnet ef migrations remove --no-build --context "EAMonitorContextSQL" --runtime net6.0
         dotnet ef migrations remove --no-build --context "EAMonitorContextSqlite" --runtime net6.0
