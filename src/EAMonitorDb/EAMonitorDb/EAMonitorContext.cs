@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EAMonitorDb
+namespace EAMonitor
 {
     public class EAMonitorContext : DbContext
     {

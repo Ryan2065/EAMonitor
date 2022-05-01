@@ -1,6 +1,6 @@
 Function New-EAMonitorJob{
     Param(
-        [RegisteredEAMonitor[]]$Monitors
+        [EAMonitor.Classes.EAMonitorRegistered[]]$Monitors
     )
     $Jobs = @()
     foreach($monitor in $monitors){

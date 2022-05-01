@@ -47,7 +47,7 @@ Function Start-EAMonitor {
         
         $JobDbRecords = Search-EFPosh @SearchEFPoshParams
 
-        $RegisteredMonitorsToRun = New-Object System.Collections.Generic.List[RegisteredEAMonitor]
+        $RegisteredMonitorsToRun = New-Object System.Collections.Generic.List[EAMonitor.Classes.EAMonitorRegistered]
     }
     process{
         foreach($ImportedMonitor in $tempImportedMonitors){

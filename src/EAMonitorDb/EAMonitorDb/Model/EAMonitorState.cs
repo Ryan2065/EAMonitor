@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EAMonitorDb
+namespace EAMonitor
 {
-    public class EAMonitorJobStatus
+    public class EAMonitorState
     {
-        public EAMonitorJobStatus()
+        public EAMonitorState()
         {
+            Monitors = new HashSet<EAMonitor>();
             Jobs = new HashSet<EAMonitorJob>();
         }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
@@ -22,7 +24,10 @@ namespace EAMonitorDb
         [MaxLength(20)]
         public string Name { get; set; }
 
-        [ForeignKey("JobStatusId")]
+        [ForeignKey("MonitorStateId")]
+        public ICollection<EAMonitor> Monitors { get; set; }
+
+        [ForeignKey("MonitorStateId")]
         public ICollection<EAMonitorJob> Jobs { get; set; }
     }
 }

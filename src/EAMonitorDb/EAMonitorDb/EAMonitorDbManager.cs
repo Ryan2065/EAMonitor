@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EAMonitorDb
+namespace EAMonitor
 {
     public enum EAMonitorDbType
     {

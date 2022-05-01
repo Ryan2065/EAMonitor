@@ -37,10 +37,10 @@ Function Initialize-EAMonitor{
     }
     Process{
         if($PSVersionTable.PSVersion.Major -gt 5){
-            $Script:efPoshDbContextParams['AssemblyFile'] = [System.IO.Path]::Combine($ParentDirectory.FullName, "Dependencies", "net6.0", "EAMonitorDb.dll")
+            $Script:efPoshDbContextParams['AssemblyFile'] = [System.IO.Path]::Combine($ParentDirectory.FullName, "Dependencies", "net6.0", "EAMonitor.dll")
         }
         else{
-            $Script:efPoshDbContextParams['AssemblyFile'] = [System.IO.Path]::Combine($ParentDirectory.FullName, "Dependencies", "net472", "EAMonitorDb.dll")
+            $Script:efPoshDbContextParams['AssemblyFile'] = [System.IO.Path]::Combine($ParentDirectory.FullName, "Dependencies", "net472", "EAMonitor.dll")
         }
 
         if($Environment){

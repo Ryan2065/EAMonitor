@@ -21,15 +21,6 @@
 	<None Remove="Migrations\SQLite\**" />
   </ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<Compile Remove="Migrations\SQLNet47\**" />
-		<EmbeddedResource Remove="Migrations\SQLNet47\**" />
-		<None Remove="Migrations\SQLNet47\**" />
-		<Compile Remove="Migrations\SQLiteNet47\**" />
-		<EmbeddedResource Remove="Migrations\SQLiteNet47\**" />
-		<None Remove="Migrations\SQLiteNet47\**" />
-	</ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" Condition="'$(TargetFramework)' == 'net6.0'">
 		  <PrivateAssets>all</PrivateAssets>
@@ -44,18 +35,26 @@
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
     
-     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'">
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'">
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'" >
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'">
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
   	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" Condition="'$(TargetFramework)' == 'net472'">
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
+  	  <PackageReference Include="Pester" Version="5.3.*" >
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+	  <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

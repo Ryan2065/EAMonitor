@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EAMonitorDb
+namespace EAMonitor
 {
     public class EAMonitorJobTest
     {
@@ -16,11 +16,9 @@ namespace EAMonitorDb
         [ForeignKey("Job")]
         public Guid JobId { get; set; }
         public EAMonitorJob Job { get; set; }
-
         public string TestPath { get; set; }
-
         public string TestExpandedPath { get; set; }
-
+        public string Message { get; set; }
         public bool Passed { get; set; }
 
         public DateTime? ExecutedAt { get; set; }

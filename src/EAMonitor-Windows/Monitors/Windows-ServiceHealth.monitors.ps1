@@ -2,7 +2,7 @@
 BeforeDiscovery{
     # Monitors windows service health
     $MonitorSettings = Get-EAMonitorSetting -MonitorName 'Windows-ServiceHealth'
-
+    
     $ComputersToMonitor = $MonitorSettings."WindowsServiceHealth-ComputerList"
     $SecretToUse = $MonitorSettings."WindowsServiceHealth-SecretToUse"
 
@@ -35,8 +35,8 @@ Describe "Computer <_.Computer>" -ForEach $Tests {
     It "Services should be found for the computer"{
         $_.Services | Should -not -be $null
     }
-    Context " Service <_.Name>" -Foreach $_.Services {
-        It " Is not running but is startup type automatic" {
+    Context "Service <_.Name>" -Foreach $_.Services {
+        It "Is not running but is startup type automatic" {
             $_.Status | Should -be 'Running'
         }
     }

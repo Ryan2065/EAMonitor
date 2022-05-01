@@ -1,7 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EAMonitorDb.Migrations.SQLite
+namespace EAMonitor.Migrations.SQLite
 {
     public partial class Initial : Migration
     {
@@ -138,6 +138,7 @@ namespace EAMonitorDb.Migrations.SQLite
                     JobId = table.Column<Guid>(nullable: false),
                     TestPath = table.Column<string>(nullable: true),
                     TestExpandedPath = table.Column<string>(nullable: true),
+                    Message = table.Column<string>(nullable: true),
                     Passed = table.Column<bool>(nullable: false),
                     ExecutedAt = table.Column<DateTime>(nullable: true)
                 },

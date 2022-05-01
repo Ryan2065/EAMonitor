@@ -8,7 +8,7 @@ Function Import-EAMonitor{
     begin{
         New-EAMonitorDbContext
         if($null -eq $Script:ImportedMonitors){
-            $Script:ImportedMonitors = New-Object System.Collections.Generic.List[RegisteredEAMonitor]
+            $Script:ImportedMonitors = New-Object System.Collections.Generic.List[EAMonitor.Classes.EAMonitorRegistered]
         }
     }
     process{
@@ -20,7 +20,10 @@ Function Import-EAMonitor{
             throw [System.Management.Automation.PSNotSupportedException] "Could not find the file path $($path)"
             return
         }
-        $Script:ImportedMonitors.Add([RegisteredEAMonitor]::new($Path))
+        $RegisteredMonitor = [EAMonitor.Classes.EAMonitorRegistered]::new($Path)
+        $LocalSettings = Get-EAMonitorLocalSettings -MonitorName $RegisteredMonitor.Name -Directory $RegisteredMonitor.Directory -Environment $Script:EAMonitorEnvironment
+        $RegisteredMonitor.DbMonitorObject = Register-EAMonitor -MonitorName $RegisteredMonitor.Name -Description $localSettings['Description']
+        $Script:ImportedMonitors.Add($RegisteredMonitor)
     }
     end{
 

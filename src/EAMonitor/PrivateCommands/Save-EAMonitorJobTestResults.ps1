@@ -1,6 +1,6 @@
 Function Save-EAMonitorJobTestResults {
     Param(
-        [object[]]$results, [RegisteredEAMonitor[]]$Monitors, [object[]]$Jobs
+        [Pester.Run]$results, [EAMonitor.Classes.EAMonitorRegistered[]]$Monitors, [object[]]$Jobs
     )
     $SaveCount = 0
     foreach($result in $results.Tests){
@@ -73,7 +73,6 @@ Function Save-EAMonitorJobTestResults {
         $JobObject.JobStatusId = $JobStateObject.Id
         $JobObject.MonitorStateId = $MonitorStateObject.Id
         $MonitorObject.DbMonitorObject.MonitorStateId = $MonitorStateObject.Id
-
     }
     Save-EAMonitorContext
 }

@@ -33,7 +33,7 @@ Function Get-EAMonitorSetting{
     if($null -ne $Script:ImportedMonitors -and ( -not [string]::IsNullOrEmpty($MonitorName ))){
         foreach($mon in $Script:ImportedMonitors){
             if($mon.Name -eq $MonitorName){
-                $MonitorLocalSettings = $mon.GetLocalSettings($Env)
+                $MonitorLocalSettings = Get-EAMonitorLocalSettings -MonitorName $mon.Name -Directory $mon.Directory -Environment $env
             }
         }
     }

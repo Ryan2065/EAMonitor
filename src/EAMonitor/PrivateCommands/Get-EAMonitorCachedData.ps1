@@ -5,7 +5,7 @@ Function Get-EAMonitorCachedData{
         [TimeSpan]$ActiveFor
     )
     if($null -eq $Script:eaMonitorCachedData){
-        $Script:eaMonitorCachedData = [System.Collections.Generic.Dictionary[string,EAMonitorCacheData]]::new()
+        $Script:eaMonitorCachedData = [System.Collections.Generic.Dictionary[string,EAMonitor.Classes.EAMonitorCacheData]]::new()
     }
     $gottenValue = $null
     if($Script:eaMonitorCachedData.TryGetValue($Name, [ref]$gottenValue) ){
@@ -13,7 +13,7 @@ Function Get-EAMonitorCachedData{
             return $gottenValue.CachedResult
         }
     }
-    $NewCacheItem = [EAMonitorCacheData]::new()
+    $NewCacheItem = [EAMonitor.Classes.EAMonitorCacheData]::new()
     $NewCacheItem.ExpireAt = [DateTime]::UtcNow.AddSeconds($ActiveFor.TotalSeconds)
     $NewCacheItem.CachedResult = . $ScriptBlock
     $Script:eaMonitorCachedData[$Name] = $NewCacheItem

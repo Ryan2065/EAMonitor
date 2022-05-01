@@ -13,7 +13,7 @@ $LastBuildTimeFile = [System.IO.Path]::Combine($($env:temp), "EAMonitorLastBuild
 if(Test-Path $LastBuildTimeFile -ErrorAction SilentlyContinue){
   try{
     $LastBuildTime = Get-Content $LastBuildTimeFile | ConvertFrom-JSON
-    $MigrationFilesToCheck = Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb" -File
+    $MigrationFilesToCheck = Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb" -Recurse -Depth 2 -Filter '*.cs' -File
     $MigrationFilesToCheck += Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\SqlFiles" -File
     $MigrationFilesToCheck += Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\SqliteFiles" -File
     $FilesToCheck = Get-ChildItem "$PSScriptRoot\EAMonitorDb\EAMonitorDb\Migrations" -File -Recurse
