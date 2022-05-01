@@ -44,7 +44,7 @@ Function Initialize-EAMonitor{
         }
 
         if($Environment){
-            $Script:EAMonitorEnvironment = Register-EAMonitorEnvironment -Name $Environment
+            $Script:EAMonitorEnvironment = $Environment
         }
         
         if($PSCmdlet.ParameterSetName -eq 'Sqlite'){

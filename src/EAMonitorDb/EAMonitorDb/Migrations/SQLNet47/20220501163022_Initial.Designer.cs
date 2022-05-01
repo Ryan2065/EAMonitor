@@ -3,20 +3,23 @@ using System;
 using EAMonitorDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EAMonitorDb.Migrations.SQLiteNet47
+namespace EAMonitorDb.Migrations.SQLNet47
 {
-    [DbContext(typeof(EAMonitorContextSqliteNet47))]
-    [Migration("20220424161246_Initial")]
+    [DbContext(typeof(EAMonitorContextSQLNet47))]
+    [Migration("20220501163022_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EAMonitorDb.EAMonitor", b =>
                 {
@@ -45,20 +48,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     b.ToTable("EAMonitor");
                 });
 
-            modelBuilder.Entity("EAMonitorDb.EAMonitorEnvironment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EAMonitorEnvironment");
-                });
-
             modelBuilder.Entity("EAMonitorDb.EAMonitorJob", b =>
                 {
                     b.Property<Guid>("Id")
@@ -82,9 +71,9 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
 
                     b.HasIndex("JobStatusId");
 
-                    b.HasIndex("MonitorId");
-
                     b.HasIndex("MonitorStateId");
+
+                    b.HasIndex("MonitorId", "Created");
 
                     b.ToTable("EAMonitorJob");
                 });
@@ -154,13 +143,12 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorSetting", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("LastModified");
 
                     b.Property<Guid?>("MonitorId");
-
-                    b.Property<int?>("SettingEnvironmentId");
 
                     b.Property<int>("SettingKeyId");
 
@@ -171,8 +159,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
 
                     b.HasIndex("MonitorId");
 
-                    b.HasIndex("SettingEnvironmentId");
-
                     b.HasIndex("SettingKeyId");
 
                     b.ToTable("EAMonitorSetting");
@@ -181,7 +167,8 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
             modelBuilder.Entity("EAMonitorDb.EAMonitorSettingKey", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -266,10 +253,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     b.HasOne("EAMonitorDb.EAMonitor", "Monitor")
                         .WithMany("Settings")
                         .HasForeignKey("MonitorId");
-
-                    b.HasOne("EAMonitorDb.EAMonitorEnvironment", "SettingEnvironment")
-                        .WithMany("Settings")
-                        .HasForeignKey("SettingEnvironmentId");
 
                     b.HasOne("EAMonitorDb.EAMonitorSettingKey", "SettingKey")
                         .WithMany("Settings")

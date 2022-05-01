@@ -26,8 +26,5 @@ namespace EAMonitorDb
         [Required]
         public DateTime LastModified { get; set; }
 
-        [ForeignKey("SettingEnvironment")]
-        public int? SettingEnvironmentId { get; set; }
-        public EAMonitorEnvironment SettingEnvironment { get; set; }
     }
 }

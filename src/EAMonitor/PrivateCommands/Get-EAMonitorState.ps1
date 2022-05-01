@@ -5,7 +5,7 @@ Function Get-EAMonitorState{
         [string]$StateName
     )
     $monitorStates = Get-EAMonitorCachedData -Name 'MonitorStates' -ActiveFor ( New-TimeSpan -Minutes 20 ) -ScriptBlock {
-        Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorState -ToList
+        Search-EFPosh -DbContext $Script:EAMonitorDbContext -Entity 'EAMonitorState' -ToList
     }
     foreach($state in $monitorStates){
         if($state.Name -eq $StateName){ return $state }

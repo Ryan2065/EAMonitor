@@ -6,7 +6,8 @@ Function Get-EAMonitorJobStatus{
         Write-Debug "Retrieving all statuses from DB"
         $SearchArguments = @{
             'ToList' = $true
-            'Entity' = $Script:EAMonitorDbContext.EAMonitorJobStatus
+            'Entity' = 'EAMonitorJobStatus'
+            'DbContext' = $Script:EAMonitorDbContext
         }
         Search-EFPosh @SearchArguments
     }

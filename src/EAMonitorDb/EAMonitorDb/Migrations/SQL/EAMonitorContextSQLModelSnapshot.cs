@@ -46,21 +46,6 @@ namespace EAMonitorDb.Migrations.SQL
                     b.ToTable("EAMonitor");
                 });
 
-            modelBuilder.Entity("EAMonitorDb.EAMonitorEnvironment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EAMonitorEnvironment");
-                });
-
             modelBuilder.Entity("EAMonitorDb.EAMonitorJob", b =>
                 {
                     b.Property<Guid>("Id")
@@ -84,9 +69,9 @@ namespace EAMonitorDb.Migrations.SQL
 
                     b.HasIndex("JobStatusId");
 
-                    b.HasIndex("MonitorId");
-
                     b.HasIndex("MonitorStateId");
+
+                    b.HasIndex("MonitorId", "Created");
 
                     b.ToTable("EAMonitorJob");
                 });
@@ -163,8 +148,6 @@ namespace EAMonitorDb.Migrations.SQL
 
                     b.Property<Guid?>("MonitorId");
 
-                    b.Property<int?>("SettingEnvironmentId");
-
                     b.Property<int>("SettingKeyId");
 
                     b.Property<string>("SettingValue")
@@ -173,8 +156,6 @@ namespace EAMonitorDb.Migrations.SQL
                     b.HasKey("Id");
 
                     b.HasIndex("MonitorId");
-
-                    b.HasIndex("SettingEnvironmentId");
 
                     b.HasIndex("SettingKeyId");
 
@@ -270,10 +251,6 @@ namespace EAMonitorDb.Migrations.SQL
                     b.HasOne("EAMonitorDb.EAMonitor", "Monitor")
                         .WithMany("Settings")
                         .HasForeignKey("MonitorId");
-
-                    b.HasOne("EAMonitorDb.EAMonitorEnvironment", "SettingEnvironment")
-                        .WithMany("Settings")
-                        .HasForeignKey("SettingEnvironmentId");
 
                     b.HasOne("EAMonitorDb.EAMonitorSettingKey", "SettingKey")
                         .WithMany("Settings")

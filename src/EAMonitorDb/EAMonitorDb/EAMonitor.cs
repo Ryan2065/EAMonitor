@@ -25,14 +25,11 @@ namespace EAMonitorDb
 
         public DateTime Created { get; set; }
 
-        [ForeignKey("MonitorState")]
         public int MonitorStateId { get; set; }
         public EAMonitorState MonitorState { get; set; }
 
-        [ForeignKey("MonitorId")]
         public ICollection<EAMonitorJob> Jobs { get; set; }
 
-        [ForeignKey("MonitorId")]
         public ICollection<EAMonitorSetting> Settings { get; set; }
 
     }

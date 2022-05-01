@@ -8,7 +8,7 @@ Class RegisteredEAMonitor{
         
         $this.FilePath = $path
         $FileObj = Get-Item $Path
-        $monName = $FileObj.BaseName -replace '.tests',''
+        $monName = $FileObj.BaseName -replace '.monitors',''
         $this.Name = $monName
         $this.Directory = $FileObj.Directory.FullName
         $localSettings = $this.GetLocalSettings()
@@ -22,6 +22,10 @@ Class RegisteredEAMonitor{
         
     }
     [HashTable]GetLocalSettings(){
+        $EAMonEnv = $Script:EAMonitorEnvironment
+        return $this.GetLocalSettings($EAMonEnv)
+    }
+    [HashTable]GetLocalSettings([string]$EAMonEnv){
         $returnHash = @{}
         
         $DefaultSettingsFile = [System.IO.Path]::Combine($this.Directory, "$($this.Name).psd1")
@@ -32,7 +36,7 @@ Class RegisteredEAMonitor{
             }
         }
 
-        $EAMonEnv = Get-EAMonitorEnvironment
+        
         if([string]::IsNullOrEmpty($EAMonEnv)){
             return $returnHash
         }

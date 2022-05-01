@@ -8,37 +8,22 @@ Function Set-EAMonitorSetting{
         [string]$SettingKey,
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Value,
-        [Parameter(Mandatory = $false)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Environment
+        [string]$Value
     )
-    
-    $EnvironmentObject = $null
-    if(-not [string]::IsNullOrEmpty($Environment)){
-        $EnvironmentObject = Register-EAMonitorEnvironment -Name $Environment
-    }
     
     $SettingObject = $null
     $SearchEFPoshParams = @{
-        'Entity' = $Script:EAMonitorDbContext.EAMonitorSetting
+        'DbContext' = $Script:EAMonitorDbContext
+        'Entity' = 'EAMonitorSetting'
         'FirstOrDefault' = $true
     }
-    if(-not ([string]::IsNullOrEmpty($MonitorName)) -and $null -ne $EnvironmentObject) {
-        Write-Debug "Searching for setting $($SettingKey) tied to monitor $($MonitorName) for environment $($EnvironmentObject.Name)"
-        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $0 -and $_.Monitor.Name -eq $1 -and $_.SettingEnvironmentId -eq $2 } -Arguments @(,$SettingKey,$MonitorName,$EnvironmentObject.Id) @SearchEFPoshParams
-    }
-    elseif(-not ([string]::IsNullOrEmpty($MonitorName))){
-        Write-Debug "Searching for setting $($SettingKey) tied to monitor $($MonitorName) with no Environment information"
-        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $0 -and $_.Monitor.Name -eq $1 -and $_.SettingEnvironmentId -eq $2 } -Arguments @(,$SettingKey,$MonitorName,$null) @SearchEFPoshParams
-    }
-    elseif($null -ne $EnvironmentObject){
-        Write-Debug "Searching for default setting $($SettingKey) for environment $($EnvironmentObject.Name)"
-        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $0 -and $_.MonitorId -eq $1 -and $_.SettingEnvironmentId -eq $2 } -Arguments @(,$SettingKey,$null,$EnvironmentObject.Id) @SearchEFPoshParams
+    if(-not ([string]::IsNullOrEmpty($MonitorName))) {
+        Write-Debug "Searching for setting $($SettingKey) tied to monitor $($MonitorName)"
+        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $SettingKey -and $_.Monitor.Name -eq $MonitorName } @SearchEFPoshParams
     }
     else{
-        Write-Debug "Searching for default setting $($SettingKey) with no Environment information"
-        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $0 -and $_.MonitorId -eq $1 -and $_.SettingEnvironmentId -eq $2 } -Arguments @(,$SettingKey,$null,$null) @SearchEFPoshParams
+        Write-Debug "Searching for default setting $($SettingKey)"
+        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $SettingKey -and $null -eq $_.MonitorId } @SearchEFPoshParams
     }
     if($null -ne $SettingObject -and $SettingObject.SettingValue -ne $Value){
         Write-Debug "Found existing setting object with Id $($SettingObject.Id) and the value needs updating."
@@ -58,17 +43,14 @@ Function Set-EAMonitorSetting{
         $MonitorObject = Register-EAMonitor -MonitorName $MonitorName
     }
     
-
     #get the setting key or create it in the db
-    $SettingKeyObject = Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorSettingKey -Expression { $_.Name -eq $0 } -Arguments @(,$SettingKey) -FirstOrDefault
+    $SettingKeyObject = Search-EFPosh -DbContext $Script:EAMonitorDbContext -Entity EAMonitorSettingKey -Expression { $_.Name -eq $0 } -Arguments @(,$SettingKey) -FirstOrDefault
     if($null -eq $SettingKeyObject){
         $tempSettingKeyObject = New-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity EAMonitorSettingKey
         $tempSettingKeyObject.Name = $SettingKey
-
         Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $tempSettingKeyObject
         Save-EAMonitorContext
-        $SettingKeyObject = Search-EFPosh -Entity $Script:EAMonitorDbContext.EAMonitorSettingKey -Expression { $_.Name -eq $0 } -Arguments @(,$SettingKey) -FirstOrDefault
-        
+        $SettingKeyObject = Search-EFPosh -DbContext $Script:EAMonitorDbContext -Entity EAMonitorSettingKey -Expression { $_.Name -eq $0 } -Arguments @(,$SettingKey) -FirstOrDefault
     }
     if($null -eq $SettingKeyObject){
         throw "Could not get or create the setting key object"
@@ -80,9 +62,6 @@ Function Set-EAMonitorSetting{
     $NewSetting.SettingKeyId = $SettingKeyObject.Id
     if($null -ne $MonitorObject){
         $NewSetting.MonitorId = $MonitorObject.Id
-    }
-    if($null -ne $EnvironmentObject){
-        $NewSetting.SettingEnvironmentId = $EnvironmentObject.Id
     }
     Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $NewSetting
     Save-EAMonitorContext

@@ -13,10 +13,20 @@ Function Start-EAMonitor {
             Write-Warning "wfMonitor was designed for Pester 5.3 and above. It was not found. Please install Pester 5.3.0 or higher.`nWill continue, but results may be incomplete."
         }
         $SearchEFPoshParams = @{
-            'Entity' = $Script:EAMonitorDbContext.EAMonitorJob
+            'DbContext' = $Script:EAMonitorDbContext
+            'Entity' = 'EAMonitorJob'
             'FirstOrDefault' = $true
             'OrderByDescending' = 'Created'
             'Include' = 'Monitor'
+            'FromSql' = "
+                SELECT eaj.*
+                FROM EAMonitorJob eaj
+                JOIN (
+                    SELECT eajJoin.MonitorId, MAX(eajJoin.Created)
+                    FROM EAMonitorJob eajJoin
+                    GROUP BY MonitorId) eajMax
+                WHERE eajMax.MonitorId IS NOT NULL
+            "
         }
 
         $tempImportedMonitors = $Script:ImportedMonitors
@@ -33,8 +43,7 @@ Function Start-EAMonitor {
                 }
             }
         }
-        $SearchEFPoshParams['Expression'] = { $0 -contains $_.Monitor.Name }
-        $SearchEFPoshParams['Arguments'] = @(,$tempImportedMonitors.Name)
+        $SearchEFPoshParams['Expression'] = { $tempImportedMonitors.Name -contains $_.Monitor.Name }
         
         $JobDbRecords = Search-EFPosh @SearchEFPoshParams
 
@@ -42,7 +51,7 @@ Function Start-EAMonitor {
     }
     process{
         foreach($ImportedMonitor in $tempImportedMonitors){
-            $Settings = Get-EAMonitorSettings -MonitorName $ImportedMonitor.Name
+            $Settings = Get-EAMonitorSetting -MonitorName $ImportedMonitor.Name
             if($true -ne $Settings.Enabled){
                 Write-Debug "Monitor $($ImportedMonitor.Name) is not enabled - skipping"
             }
@@ -82,20 +91,19 @@ Function Start-EAMonitor {
         $jobs = New-EAMonitorJob -Monitors $RegisteredMonitorsToRun
 
         $ScriptFiles = $RegisteredMonitorsToRun.FilePath
-        $BreakErrorAction = $false
-        if($Global:ErrorActionPreference -eq 'Break'){
-            $BreakErrorAction = $true
-            $Global:ErrorActionPreference = 'Stop'
-        }
+        $PesterConfig = New-PesterConfiguration
+        $PesterConfig.CodeCoverage.Enabled = $false
+        $PesterConfig.Run.Path = $ScriptFiles
+        $PesterConfig.Run.PassThru = $true
+        $PesterConfig.Run.TestExtension = 'monitors'
         $results = Invoke-Pester -Path $ScriptFiles -PassThru @PesterParams
-        if($BreakErrorAction){
-            $Global:ErrorActionPreference = 'Break'
-        }
+        
+    }
+    end{
         Save-EAMonitorJobTestResults -Results $results -Monitors $RegisteredMonitorsToRun -Jobs $Jobs
-
+        
         if($PassThru){
             return $results
         }
     }
-    end{}
 }

@@ -5,13 +5,14 @@ Function Get-EAMonitor{
         [string]$Name
     )
     $SearchEFPoshParams = @{
-        'Entity' = $Script:EAMonitorDbContext.EAMonitor
-        'Include' =  @('Settings','Settings')
-        'ThenInclude' =  @('SettingKey', 'SettingEnvironment')
+        'DbContext' = $Script:EAMonitorDbContext
+        'Entity' = 'EAMonitor'
+        'Include' =  @('Settings')
+        'ThenInclude' =  @('SettingKey')
         'ToList' = $true
     }
     if(-not ( [string]::IsNullOrEmpty($Name ))){
-        return Search-EFPosh -Expression { $_.Name -eq $0 } -Arguments @(,$Name) @SearchEFPoshParams
+        return Search-EFPosh -Expression { $_.Name -eq $Name } @SearchEFPoshParams
     }
     else{
         return Search-EFPosh @SearchEFPoshParams

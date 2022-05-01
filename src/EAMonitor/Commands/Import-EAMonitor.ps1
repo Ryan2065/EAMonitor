@@ -12,8 +12,8 @@ Function Import-EAMonitor{
         }
     }
     process{
-        if(-not $path.ToLower().EndsWith('tests.ps1')){
-            throw [System.Management.Automation.PSNotSupportedException] "The file $($path) is not a valid Pester file ending in .tests.ps1"
+        if(-not $path.ToLower().EndsWith('monitors.ps1')){
+            throw [System.Management.Automation.PSNotSupportedException] "The file $($path) is not a valid EAMonitor file ending in .monitors.ps1"
             return
         }
         elseif(-not ( Test-Path $path -ErrorAction SilentlyContinue)){

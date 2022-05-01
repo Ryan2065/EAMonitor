@@ -25,7 +25,6 @@ namespace EAMonitorDb
         public DbSet<EAMonitorJob> EAMonitorJob { get; set; }
         public DbSet<EAMonitorJobStatus> EAMonitorJobStatus { get; set; }
         public DbSet<EAMonitorState> EAMonitorState { get; set; }
-        public DbSet<EAMonitorEnvironment> EAMonitorEnvironment { get; set; }
         public DbSet<EAMonitorSettingKey> EAMonitorSettingKey { get; set; }
         public DbSet<EAMonitorSetting> EAMonitorSetting { get; set; }
         public DbSet<EAMonitorJobTest> EAMonitorJobTest { get; set; }
@@ -40,7 +39,6 @@ namespace EAMonitorDb
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EAMonitor>().HasIndex(p => p.Name).IsUnique();
-
             modelBuilder.Entity<EAMonitorJobStatus>().HasData(
                 new EAMonitorJobStatus { Name = "Created", Id = 1 },
                 new EAMonitorJobStatus { Name = "InProgress", Id = 2 },
@@ -66,6 +64,7 @@ namespace EAMonitorDb
                 new EAMonitorState { Name = "Down", Id = 3 },
                 new EAMonitorState { Name = "Warning", Id = 4 }
             );
+            modelBuilder.Entity<EAMonitorJob>().HasIndex(p => new { p.MonitorId, p.Created });
 #if NET472
             modelBuilder.Query<v_EAMonitor>().ToView("v_EAMonitor");
 #else

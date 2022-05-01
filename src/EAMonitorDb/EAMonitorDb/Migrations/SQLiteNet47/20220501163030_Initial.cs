@@ -8,19 +8,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "EAMonitorEnvironment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EAMonitorEnvironment", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EAMonitorJobStatus",
                 columns: table => new
                 {
@@ -124,8 +111,7 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                     SettingKeyId = table.Column<int>(nullable: false),
                     MonitorId = table.Column<Guid>(nullable: true),
                     SettingValue = table.Column<string>(nullable: false),
-                    LastModified = table.Column<DateTime>(nullable: false),
-                    SettingEnvironmentId = table.Column<int>(nullable: true)
+                    LastModified = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,12 +120,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                         name: "FK_EAMonitorSetting_EAMonitor_MonitorId",
                         column: x => x.MonitorId,
                         principalTable: "EAMonitor",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_EAMonitorSetting_EAMonitorEnvironment_SettingEnvironmentId",
-                        column: x => x.SettingEnvironmentId,
-                        principalTable: "EAMonitorEnvironment",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -234,14 +214,14 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 column: "JobStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EAMonitorJob_MonitorId",
-                table: "EAMonitorJob",
-                column: "MonitorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorJob_MonitorStateId",
                 table: "EAMonitorJob",
                 column: "MonitorStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EAMonitorJob_MonitorId_Created",
+                table: "EAMonitorJob",
+                columns: new[] { "MonitorId", "Created" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorJobTest_JobId",
@@ -252,11 +232,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
                 name: "IX_EAMonitorSetting_MonitorId",
                 table: "EAMonitorSetting",
                 column: "MonitorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EAMonitorSetting_SettingEnvironmentId",
-                table: "EAMonitorSetting",
-                column: "SettingEnvironmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EAMonitorSetting_SettingKeyId",
@@ -301,9 +276,6 @@ namespace EAMonitorDb.Migrations.SQLiteNet47
 
             migrationBuilder.DropTable(
                 name: "EAMonitorJob");
-
-            migrationBuilder.DropTable(
-                name: "EAMonitorEnvironment");
 
             migrationBuilder.DropTable(
                 name: "EAMonitorSettingKey");
