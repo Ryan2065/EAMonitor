@@ -48,7 +48,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
   	  <PackageReference Include="Pester" Version="5.3.*" >
-		  <PrivateAssets>all</PrivateAssets>
+		  
 	  </PackageReference>
 	  <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivateAssets="All" />
   </ItemGroup>

@@ -138,7 +138,7 @@ namespace EAMonitor.Migrations.SQLiteNet47
                     JobId = table.Column<Guid>(nullable: false),
                     TestPath = table.Column<string>(nullable: true),
                     TestExpandedPath = table.Column<string>(nullable: true),
-                    Message = table.Column<string>(nullable: true),
+                    Data = table.Column<string>(nullable: true),
                     Passed = table.Column<bool>(nullable: false),
                     ExecutedAt = table.Column<DateTime>(nullable: true)
                 },

@@ -20,9 +20,13 @@ BeforeDiscovery{
     $Tests = @()
     Foreach($computer in $ComputersToMonitor.Split(",")){
         $computer = $computer.Trim()
-        $result = Invoke-Command -ComputerName $computer @InvokeCommandSettings -ErrorAction SilentlyContinue -ScriptBlock {
-            Get-Service | Where-Object { $_.StartType -eq 'Automatic' }
+        $result = $null
+        if(Test-Connection -ComputerName $computer -Count 1 -ErrorAction 'SilentlyContinue'){
+            $result = Invoke-Command -ComputerName $computer @InvokeCommandSettings -ErrorAction SilentlyContinue -ScriptBlock {
+                Get-Service | Where-Object { $_.StartType -eq 'Automatic' }
+            }
         }
+        
         $Tests += @{
             'Computer' = $computer
             'Services' = $result
@@ -32,11 +36,11 @@ BeforeDiscovery{
 
 
 Describe "Computer <_.Computer>" -ForEach $Tests {
-    It "Services should be found for the computer"{
+    It "Computer should be online and return a list of services"{
         $_.Services | Should -not -be $null
     }
     Context "Service <_.Name>" -Foreach $_.Services {
-        It "Is not running but is startup type automatic" {
+        It "Automatic service should be running" {
             $_.Status | Should -be 'Running'
         }
     }

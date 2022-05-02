@@ -100,8 +100,9 @@ Function Start-EAMonitor {
         
     }
     end{
-        Save-EAMonitorJobTestResults -Results $results -Monitors $RegisteredMonitorsToRun -Jobs $Jobs
-        
+        $EAMonitorResultObjects = ConvertTo-EAMonitorResult -Results $results -Monitors $RegisteredMonitorsToRun -Jobs $Jobs
+        Save-EAMonitorJobTestResults -Results $EAMonitorResultObjects
+        Send-EAMonitorJobTestResults -Results $EAMonitorResultObjects
         if($PassThru){
             return $results
         }

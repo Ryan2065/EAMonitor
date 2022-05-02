@@ -18,7 +18,7 @@ namespace EAMonitor
         public EAMonitorJob Job { get; set; }
         public string TestPath { get; set; }
         public string TestExpandedPath { get; set; }
-        public string Message { get; set; }
+        public string Data { get; set; }
         public bool Passed { get; set; }
 
         public DateTime? ExecutedAt { get; set; }

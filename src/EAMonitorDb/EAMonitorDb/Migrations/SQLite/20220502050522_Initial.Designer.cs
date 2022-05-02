@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EAMonitor.Migrations.SQLite
 {
     [DbContext(typeof(EAMonitorContextSqlite))]
-    [Migration("20220501192756_Initial")]
+    [Migration("20220502050522_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,11 +120,11 @@ namespace EAMonitor.Migrations.SQLite
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Data");
+
                     b.Property<DateTime?>("ExecutedAt");
 
                     b.Property<Guid>("JobId");
-
-                    b.Property<string>("Message");
 
                     b.Property<bool>("Passed");
 

@@ -1,70 +1,46 @@
 Function Save-EAMonitorJobTestResults {
     Param(
-        [Pester.Run]$results, [EAMonitor.Classes.EAMonitorRegistered[]]$Monitors, [object[]]$Jobs
+        [EAMonitor.Classes.EAMonitorResult[]]$results
     )
     $SaveCount = 0
-    foreach($result in $results.Tests){
-        $MonitorFile = $result.Block.BlockContainer.Item
-        $MonitorObject = $null
-        foreach($mon in $Monitors){
-            if($mon.FilePath -eq $MonitorFile){
-                $MonitorObject = $mon
-            }
-        }
-        if($null -eq $MonitorObject){
-            Write-Warning "Could not parse results for test file $($MonitorFile)"
-            continue
-        }
-        $JobObject = $null
-        foreach($job in $jobs){
-            if($job.MonitorId -eq $MonitorObject.DbMonitorObject.Id){
-                $JobObject = $job
-            }
-        }
-        if($null -eq $JobObject){
-            Write-Warning "Could not parse results for test file $($MonitorFile)"
-            continue
-        }
+    $MonitorResults = @{}
+    foreach($result in $results){
+        $MonitorObject = $result.Monitor
+        $JobObject = $result.Job
+        $testResult = $result.TestResult
 
         $NewResult = New-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity EAMonitorJobTest
         $NewResult.Id = ( New-Guid ).Guid
         $NewResult.JobId = $JobObject.Id
-        $NewResult.TestPath = ($result.Path -join '.')
-        $NewResult.TestExpandedPath = $result.ExpandedPath 
-        $NewResult.Passed = $result.Passed
-        $NewResult.ExecutedAt = $result.ExecutedAt
+        $NewResult.TestPath = ($testResult.Path -join '.')
+        $NewResult.TestExpandedPath = $testResult.ExpandedPath 
+        $NewResult.Passed = $testResult.Passed
+        $NewResult.ExecutedAt = $testResult.ExecutedAt
+        if($null -ne $result.Data){
+            $NewResult.Data = $result.Data | ConvertTo-JSON -Compress
+        }
         Add-EFPoshEntity -DbContext $Script:EAMonitorDbContext -Entity $NewResult
         $SaveCount++
         if($SaveCount -eq 30){
             $SaveCount = 0
             Save-EAMonitorContext
         }
+        if(-not ($MonitorResults.ContainsKey($MonitorObject.DbMonitorObject.Id))){
+            $MonitorResults[$MonitorObject.DbMonitorObject.Id] = $result
+        }
+        if($false -eq $testResult.Passed){
+            $MonitorResults[$MonitorObject.DbMonitorObject.Id] = $result
+        }
     }
-    foreach($container in $results.Containers){
-        $MonitorFile = $container.Item
-        $MonitorObject = $null
-        foreach($mon in $Monitors){
-            if($mon.FilePath -eq $MonitorFile){
-                $MonitorObject = $mon
-            }
-        }
-        if($null -eq $MonitorObject){
-            Write-Warning "Could not parse results for test file $($MonitorFile)"
-            continue
-        }
-        $JobObject = $null
-        foreach($job in $jobs){
-            if($job.MonitorId -eq $MonitorObject.DbMonitorObject.Id){
-                $JobObject = $job
-            }
-        }
-        if($null -eq $JobObject){
-            Write-Warning "Could not parse results for test file $($MonitorFile)"
-            continue
-        }
+    Save-EAMonitorContext
+    foreach($key in $MonitorResults.Keys){
+        $MonitorResult = $MonitorResults[$key]
+        $MonitorObject = $MonitorResult.Monitor
+        $JobObject = $MonitorResult.Job
+        $testResult = $MonitorResult.TestResult
         $JobStatus = 'Failed'
         $MonitorState = 'Down'
-        if($true -eq $result.Passed){
+        if($true -eq $testResult.Passed){
             $JobStatus = 'Completed'
             $MonitorState = 'Up'
         }

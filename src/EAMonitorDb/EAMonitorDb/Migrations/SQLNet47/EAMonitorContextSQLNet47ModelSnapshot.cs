@@ -121,11 +121,11 @@ namespace EAMonitor.Migrations.SQLNet47
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Data");
+
                     b.Property<DateTime?>("ExecutedAt");
 
                     b.Property<Guid>("JobId");
-
-                    b.Property<string>("Message");
 
                     b.Property<bool>("Passed");
 

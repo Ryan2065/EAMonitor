@@ -33,7 +33,6 @@ Function Initialize-EAMonitor{
             'RunMigrations' = $true -eq $CreateDb
         }
         $ParentDirectory = (Get-Item $PSScriptRoot).Parent
-        $ModulesToImport = @()
     }
     Process{
         if($PSVersionTable.PSVersion.Major -gt 5){
@@ -73,10 +72,6 @@ Function Initialize-EAMonitor{
         }
         New-EAMonitorDbContext -Force
 
-        foreach($module in $ModulesToImport){
-            Write-Verbose "Importing module $($module.Name)"
-            Import-Module $module.Name -Force -Verbose:$false
-        }
     }
     end{
         if($DetectMonitorModules){
