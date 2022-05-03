@@ -13,7 +13,7 @@ $RuntimeFoldersToKeep = @(
 $RuntimeFolders = Get-ChildItem "$PSScriptRoot\bin\release\net6.0\publish\runtimes" -Directory -ErrorAction SilentlyContinue
 foreach($RuntimeFolder in $RuntimeFolders){
     if($RuntimeFoldersToKeep -notcontains $RuntimeFolder.BaseName){
-        Remove-Item $RuntimeFolder.FullName -Recurse -Force
+        #Remove-Item $RuntimeFolder.FullName -Recurse -Force
     }
 }
 

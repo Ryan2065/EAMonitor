@@ -12,62 +12,22 @@ Function Send-EAMonitorJobTestResults{
         }
         $FailedResultHash[$FailedResult.Monitor.Name] += $FailedResult
     }
-    $EnvironmentString = ''
-    if(-not [string]::IsNullOrEmpty($Script:EAMonitorEnvironment)){
-        $EnvironmentString = " for environment $($Script:EAMonitorEnvironment)"
-    }
-    $ReportBody = "Please review the failed monitors$($EnvironmentString).`n"
+
+    
     foreach($key in $FailedResultHash.Keys){
         $FailedResultArray = @($FailedResultHash[$key])
+        
         $MonitorName = $FailedResultArray[0].Monitor.Name
-        $ReportBody += $FailedResultArray.Data | ConvertTo-Html -Fragment -PreContent "<h2>$($MonitorName)</h2>"
+        $SendActions = @(Get-EAMonitorAction -MonitorName $MonitorName -Type 'SendNotification')
+        foreach($SendAction in $SendActions){
+            try{
+                $null = Invoke-Command -ScriptBlock $SendAction.Script -ArgumentList @(,$FailedResultArray)
+            }
+            catch{
+                Write-Error "Couldn't send notification $($SendAction.Name) for monitor $($MonitorName)" -Exception $_ -ErrorAction Continue
+                continue
+            }
+        }
     }
-    $Header = "
-    <style>
-    h2 {
-
-        font-family: Arial, Helvetica, sans-serif;
-        color: #000099;
-        font-size: 16px;
-
-    }
-    table {
-		font-size: 12px;
-		border: 0px; 
-		font-family: Arial, Helvetica, sans-serif;
-	} 
-	
-    td {
-		padding: 4px;
-		margin: 0px;
-		border: 0;
-	}
-	
-    th {
-        background: #395870;
-        background: linear-gradient(#49708f, #293f50);
-        color: #fff;
-        font-size: 11px;
-        text-transform: uppercase;
-        padding: 10px 15px;
-        vertical-align: middle;
-	}
-
-    tbody tr:nth-child(even) {
-        background: #f0f0f2;
-    }
-    </style>
-    "
-
-    $Report = ConvertTo-HTML -Body $ReportBody -Title "EAMonitor - Failed Monitors" -Head $header
-
-    $emailMessage = New-Object System.Net.Mail.MailMessage( 'Monitor@EphingAdmin.com' , 'Ryan@eph-it.com' )
-    $emailMessage.Subject = "EAMonitor - Failed Monitors" 
-    $emailMessage.IsBodyHtml = $true
-    $emailMessage.Body = "$Report"
-    $SMTPClient = New-Object System.Net.Mail.SmtpClient( 'smtp-relay.sendinblue.com' , 587 )
-    $SMTPClient.EnableSsl = $true
-    $SMTPClient.Credentials = New-Object System.Net.NetworkCredential( 'ryan2065@gmail.com' , $env:smtpkey );
-    $SMTPClient.Send( $emailMessage )
 }
 

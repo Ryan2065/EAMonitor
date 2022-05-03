@@ -23,7 +23,7 @@ Function Set-EAMonitorSetting{
     }
     else{
         Write-Debug "Searching for default setting $($SettingKey)"
-        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $SettingKey -and $null -eq $_.MonitorId } @SearchEFPoshParams
+        $SettingObject = Search-EFPosh -Expression { $_.SettingKey.Name -eq $SettingKey } @SearchEFPoshParams | Where-Object { $null -eq $_.MonitorId }
     }
     if($null -ne $SettingObject -and $SettingObject.SettingValue -ne $Value){
         Write-Debug "Found existing setting object with Id $($SettingObject.Id) and the value needs updating."

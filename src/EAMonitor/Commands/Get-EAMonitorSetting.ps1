@@ -15,10 +15,8 @@ Function Get-EAMonitorSetting{
     if(-not ([string]::IsNullOrEmpty($Environment))){
         $env = $Environment
     }
-
-
     # Cache settings so we don't hit the database every time
-    $eaMonitorDbSettings = Get-EAMonitorCachedData -Name 'Settings' -ActiveFor ( New-TimeSpan -Minutes 10 ) -ScriptBlock {
+    $eaMonitorDbSettings = Get-EAMemoryCacheValue -Key 'Settings' -ActiveFor ( New-TimeSpan -Minutes 10 ) -Action {
         Write-Debug "Retrieving all settings from DB"
         $SearchArguments = @{
             'ToList' = $true

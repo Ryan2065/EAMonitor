@@ -10,7 +10,12 @@ if($RemovePrevious){
     try{
         $NumberOfMigrations = ((Get-ChildItem "$PSScriptRoot\Migrations\Sql" -Filter "*.cs" -ErrorAction SilentlyContinue).Count - 1) / 2
         if($NumberOfMigrations -eq 1){
-            $null = Remove-Item "$PSScriptRoot\Migrations" -Force -Recurse
+            try{
+                $null = Remove-Item "$PSScriptRoot\Migrations" -Force -Recurse
+            }
+            catch{
+                cmd /c rd "$PSScriptRoot\Migrations" /S /Q
+            }
         }
     }
     catch{
@@ -33,8 +38,8 @@ dotnet ef migrations add "$MigrationName" --no-build --context "EAMonitorContext
 dotnet build --runtime net472 --no-self-contained
 dotnet ef migrations add "$MigrationName" --no-build --context "EAMonitorContextSQLNet47" --output-dir "Migrations/SQLNet47" --runtime net472
 dotnet ef migrations add "$MigrationName" --no-build --context "EAMonitorContextSqliteNet47" --output-dir "Migrations/SQLiteNet47" --runtime net472
-
 $BasePath = "C:\Users\Ryan2\OneDrive\Code\EAMonitor\src\EAMonitorDb\EAMonitorDb"
+
 $SqlMigrationName = (Get-ChildItem "$BasePath\Migrations\Sql" -Filter "*_$($MigrationName).cs").BaseName
 $SqliteMigrationName = (Get-ChildItem "$BasePath\Migrations\Sqlite" -Filter "*_$($MigrationName).cs").BaseName
 $SqlNet47MigrationName = (Get-ChildItem "$BasePath\Migrations\SqlNet47" -Filter "*_$($MigrationName).cs").BaseName

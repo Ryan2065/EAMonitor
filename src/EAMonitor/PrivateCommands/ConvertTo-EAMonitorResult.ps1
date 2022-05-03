@@ -28,31 +28,23 @@ Function ConvertTo-EAMonitorResult{
         $newResult.Monitor = $MonitorObject
         $newResult.Job = $JobObject
         $newResult.TestResult = $result
+        
+        $ProcessTestDataAction = Get-EAMonitorAction -MonitorName $newResult.Monitor.Name -Type 'ProcessTestData'
         try{
-            $ComposeDataSb = Get-EAMonitorSetting -Setting TestResultComposeData -MonitorName $newResult.Monitor.Name
-            if(-not [string]::IsNullOrEmpty($ComposeDataSb)){
-                if($ComposeDataSb.GetType().name -eq 'string'){
-                    $ComposeDataSb = [ScriptBlock]::Create($ComposeDataSb)
-                }
-                $composeDataResult = Invoke-Command -ScriptBlock $ComposeDataSb -ArgumentList $result
-                if($null -ne $composeDataResult -and $composeDataResult.GetType().Name -eq 'ScriptBlock'){
-                    #Sometimes storing a scriptblock in a psd1 file makes the scriptblock get nested - so running it once will just return
-                    #the block you actually want to run
-                    $composeDataResult = Invoke-Command -ScriptBlock $composeDataResult -ArgumentList $result
-                }
-                if($null -ne $composeDataResult){
-                    $newResult.Data = $composeDataResult
-                }
-                else{
-                    $newResult.Data = [PSCustomObject]@{
-                        Test = $result.ExpandedPath
-                        Passed = $result.Passed
-                    }
-                }
-            }
+            $composeDataResult = Invoke-Command -ScriptBlock $ProcessTestDataAction.Script -ArgumentList $result
         }
         catch{
-            throw
+            Write-Error "Error processing results for Monitor $($newResult.Monitor.Name) with action $($ProcessTestDataAction.Name)" -Exception $_ -ErrorAction Continue
+            continue
+        }
+        if($null -ne $composeDataResult){
+            $newResult.Data = $composeDataResult
+        }
+        else{
+            $newResult.Data = [PSCustomObject]@{
+                Test = $result.ExpandedPath
+                Passed = $result.Passed
+            }
         }
 
         $newResult

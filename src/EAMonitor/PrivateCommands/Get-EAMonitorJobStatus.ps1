@@ -2,7 +2,7 @@ Function Get-EAMonitorJobStatus{
     Param(
         [string]$Name
     )
-    $jobStatuses = Get-EAMonitorCachedData -Name 'JobStatuses' -ActiveFor ( New-TimeSpan -Minutes 20 ) -ScriptBlock {
+    $jobStatuses = Get-EAMemoryCacheValue -Key 'JobStatuses' -ActiveFor ( New-TimeSpan -Minutes 20 ) -Action {
         Write-Debug "Retrieving all statuses from DB"
         $SearchArguments = @{
             'ToList' = $true

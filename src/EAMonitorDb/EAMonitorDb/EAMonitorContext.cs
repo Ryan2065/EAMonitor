@@ -138,10 +138,17 @@ namespace EAMonitor
         {
             _conString = connectionString;
         }
+        public EAMonitorContextSQLNet47(DbContextOptions options) : base(options)
+        {
+
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_conString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(_conString);
+            }
             base.OnConfiguring(optionsBuilder);
         }
     }
@@ -157,9 +164,16 @@ namespace EAMonitor
         {
             _conString = connectionString;
         }
+        public EAMonitorContextSqliteNet47(DbContextOptions options) : base(options)
+        {
+
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(_conString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlite(_conString);
+            }
             base.OnConfiguring(optionsBuilder);
         }
     }

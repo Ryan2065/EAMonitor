@@ -4,7 +4,7 @@ Function Get-EAMonitorState{
         [ValidateSet('Unknown', 'Up', 'Down', 'Warning')]
         [string]$StateName
     )
-    $monitorStates = Get-EAMonitorCachedData -Name 'MonitorStates' -ActiveFor ( New-TimeSpan -Minutes 20 ) -ScriptBlock {
+    $monitorStates = Get-EAMemoryCacheValue -Key 'MonitorStates' -ActiveFor ( New-TimeSpan -Minutes 20 ) -Action {
         Search-EFPosh -DbContext $Script:EAMonitorDbContext -Entity 'EAMonitorState' -ToList
     }
     foreach($state in $monitorStates){

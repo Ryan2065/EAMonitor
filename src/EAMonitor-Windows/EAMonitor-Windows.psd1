@@ -51,7 +51,7 @@ Copyright = '(c) Ryan Ephgrave. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @('EAMonitor')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <IsPackageable>false</IsPackageable>

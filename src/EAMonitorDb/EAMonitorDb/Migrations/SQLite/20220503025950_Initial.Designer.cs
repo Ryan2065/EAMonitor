@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EAMonitor.Migrations.SQLite
 {
     [DbContext(typeof(EAMonitorContextSqlite))]
-    [Migration("20220502050522_Initial")]
+    [Migration("20220503025950_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
