@@ -103,7 +103,7 @@ Function Initialize-EAMonitor{
         Import-EAMonitorScriptBlock -Type 'SendNotification' -Name 'Default' -ScriptBlock {
             Param([EAMonitor.Classes.EAMonitorResult[]]$FailedResultArray)
             $MonitorName = $FailedResultArray[0].Monitor.Name
-            $monSettings = Get-EAMonitorSetting -MonitorName $MonitorName
+            $monSettings = Get-EAMonitorSetting -MonitorName $MonitorName -AsHashtable
 
             if([string]::IsNullOrEmpty($monSettings.SendMailTo)){
                 return;

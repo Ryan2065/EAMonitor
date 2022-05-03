@@ -21,8 +21,8 @@ Function Import-EAMonitor{
             return
         }
         $RegisteredMonitor = [EAMonitor.Classes.EAMonitorRegistered]::new($Path)
-        $LocalSettings = Get-EAMonitorLocalSettings -MonitorName $RegisteredMonitor.Name -Directory $RegisteredMonitor.Directory -Environment $Script:EAMonitorEnvironment
-        $RegisteredMonitor.DbMonitorObject = Register-EAMonitor -MonitorName $RegisteredMonitor.Name -Description $localSettings['Description']
+        $DescriptionSetting = Get-EAMonitorLocalSettings -MonitorName $RegisteredMonitor.Name -Directory $RegisteredMonitor.Directory -Environment $Script:EAMonitorEnvironment | Where-Object { $_.Key -eq 'Description' }
+        $RegisteredMonitor.DbMonitorObject = Register-EAMonitor -MonitorName $RegisteredMonitor.Name -Description $DescriptionSetting.Value
         $Script:ImportedMonitors.Add($RegisteredMonitor)
     }
     end{

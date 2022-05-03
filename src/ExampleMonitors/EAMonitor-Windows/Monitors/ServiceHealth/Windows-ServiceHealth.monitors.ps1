@@ -1,7 +1,7 @@
 
 BeforeDiscovery{
     # Monitors windows service health
-    $MonitorSettings = Get-EAMonitorSetting -MonitorName 'Windows-ServiceHealth'
+    $MonitorSettings = Get-EAMonitorSetting -MonitorName 'Windows-ServiceHealth' -AsHashtable
     
     $ComputersToMonitor = $MonitorSettings."WindowsServiceHealth-ComputerList"
     $SecretToUse = $MonitorSettings."WindowsServiceHealth-SecretToUse"

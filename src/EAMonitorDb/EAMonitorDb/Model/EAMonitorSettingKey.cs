@@ -19,6 +19,8 @@ namespace EAMonitor
         [MaxLength(20)]
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         [ForeignKey("SettingKeyId")]
         public ICollection<EAMonitorSetting> Settings { get; set; }
     }

@@ -51,7 +51,7 @@ Function Start-EAMonitor {
     }
     process{
         foreach($ImportedMonitor in $tempImportedMonitors){
-            $Settings = Get-EAMonitorSetting -MonitorName $ImportedMonitor.Name
+            $Settings = Get-EAMonitorSetting -MonitorName $ImportedMonitor.Name -AsHashtable
             if($true -ne $Settings.Enabled){
                 Write-Debug "Monitor $($ImportedMonitor.Name) is not enabled - skipping"
             }

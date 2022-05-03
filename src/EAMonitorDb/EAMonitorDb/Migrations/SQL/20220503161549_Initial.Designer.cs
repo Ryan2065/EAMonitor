@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EAMonitor.Migrations.SQL
 {
     [DbContext(typeof(EAMonitorContextSQL))]
-    [Migration("20220503025944_Initial")]
+    [Migration("20220503161549_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -171,6 +171,8 @@ namespace EAMonitor.Migrations.SQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Name")
                         .IsRequired()

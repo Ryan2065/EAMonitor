@@ -3,7 +3,7 @@ Function Get-EAMonitorAction{
         [string]$Type,
         [string]$MonitorName
     )
-    $Setting = Get-EAMonitorSetting -MonitorName $MonitorName -Setting $Type
+    $Setting = (Get-EAMonitorSetting -MonitorName $MonitorName -Setting $Type).Value
     if([string]::IsNullOrEmpty($Setting)){
         $Setting = 'Default'
     }

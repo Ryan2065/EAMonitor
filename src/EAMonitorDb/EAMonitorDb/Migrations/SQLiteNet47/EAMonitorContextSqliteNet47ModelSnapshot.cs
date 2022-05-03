@@ -165,6 +165,8 @@ namespace EAMonitor.Migrations.SQLiteNet47
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Description");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20);

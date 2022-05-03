@@ -9,7 +9,8 @@ Function Get-EAMonitorSetting{
         [string]$Setting,
         [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
-        [string]$Environment
+        [string]$Environment,
+        [switch]$AsHashtable
     )
     $Env = $Script:EAMonitorEnvironment
     if(-not ([string]::IsNullOrEmpty($Environment))){
@@ -26,7 +27,6 @@ Function Get-EAMonitorSetting{
         }
         Search-EFPosh @SearchArguments
     }
-    
     $MonitorLocalSettings = @{}
     if($null -ne $Script:ImportedMonitors -and ( -not [string]::IsNullOrEmpty($MonitorName ))){
         foreach($mon in $Script:ImportedMonitors){
@@ -35,28 +35,39 @@ Function Get-EAMonitorSetting{
             }
         }
     }
-    
     #now compile them all in order of least importance: Settings bunbled with the monitor -> Db general settings -> Db settings for this monitor
     $returnHash = @{}
-    foreach($key in $MonitorLocalSettings.Keys){
-        $returnHash[$key] = $MonitorLocalSettings[$key]
+    foreach($localSetting in $MonitorLocalSettings){
+        $returnHash[$localSetting.Key] = $localSetting
     }
     #Default settings from database - where no environment and no monitor listed
     $eaMonitorDbSettings | Where-Object { $null -eq $_.MonitorId } | ForEach-Object{
-        $returnHash[$_.SettingKey.Name] = $_.SettingValue
+        $returnHash[$_.SettingKey.Name] = [EAMonitor.Classes.EAMonitorSettingObject]::new($_.SettingKey.Name, $_.SettingValue, 'SqlDefault', $_.Id, $_.SettingKey.Description)
     }
     # Monitor specific settings
     if(-not [string]::IsNullOrEmpty($MonitorName)){
         #Monitor specific settings - no environment specified
         $eaMonitorDbSettings | Where-Object { $_.Monitor.Name -eq $MonitorName } | ForEach-Object{
-            $returnHash[$_.SettingKey.Name] = $_.SettingValue
+            $returnHash[$_.SettingKey.Name] = [EAMonitor.Classes.EAMonitorSettingObject]::new($_.SettingKey.Name, $_.SettingValue, 'SqlMonitor', $_.Id, $_.SettingKey.Description, $MonitorName)
         }
     }
-
+    
     if($Setting){
         return $returnHash."$Setting"
     }
     else{
-        return $returnHash
+        if($AsHashtable){
+            $newReturnHash = @{}
+            foreach($key in $returnHash.Keys){
+                $newReturnHash[$key] = $returnHash[$key].Value
+            }
+            return $newReturnHash
+        }
+        else{
+            foreach($key in $returnHash.Keys){
+                $returnHash[$key]
+            }
+        }
+        
     }
 }
