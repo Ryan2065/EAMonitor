@@ -106,7 +106,7 @@ Function Initialize-EAMonitor{
             $monSettings = Get-EAMonitorSetting -MonitorName $MonitorName -AsHashtable
 
             if([string]::IsNullOrEmpty($monSettings.SendMailTo)){
-                return;
+                return
             }
             
             $header = '<style>h2{font-family:Arial,Helvetica,sans-serif;color:#009;font-size:16px}table{font-size:12px;border:0;font-family:Arial,Helvetica,sans-serif}td{padding:4px;margin:0;border:0}th{background:#395870;background:linear-gradient(#49708f,#293f50);color:#fff;font-size:11px;text-transform:uppercase;padding:10px 15px;vertical-align:middle}tbody tr:nth-child(even){background:#f0f0f2}</style>'

@@ -64,6 +64,21 @@ namespace EAMonitor
                 new EAMonitorState { Name = "Down", Id = 3 },
                 new EAMonitorState { Name = "Warning", Id = 4 }
             );
+            modelBuilder.AddEAMonitorSettingKeyDefault("Description", "Short description of the monitor");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailTo", "Email address or addresses to send the notification to. Accepts comma separated list");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailFrom", "Email address notifications should come from");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailSmtp", "SMTP server the send email task will use");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailSmtpPort", "SMTP server port the send email task will use");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailEnableSSl", "Bool value to say if SSL is enabled or not. Use $true or $false");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendMailCredentials", "Name of credentials registered in secret management SendMail needs. Monitor will call Get-Secret -Name SendMailCredentials");
+            modelBuilder.AddEAMonitorSettingKeyDefault("Enabled", "Is the monitor enabled? $true/$false - Default $false", false.ToString());
+            modelBuilder.AddEAMonitorSettingKeyDefault("RepeatMinuteInterval", "How many minutes should pass between runs of monitor? 15 is the default", "15");
+            modelBuilder.AddEAMonitorSettingKeyDefault("ProcessTestData", "Sets the 'Process' action that will run when processing test results. This compiles the data for the send notification task.");
+            modelBuilder.AddEAMonitorSettingKeyDefault("SendNotification", "Sets the 'SendNotification' action that will run on failed monitors.");
+            modelBuilder.AddEAMonitorSettingKeyReserve();
+            modelBuilder.Entity<EAMonitorSetting>().HasQueryFilter(p => !p.SettingKey.Name.Contains("__Reserved"));
+            modelBuilder.Entity<EAMonitorSettingKey>().HasQueryFilter(p => !p.Name.Contains("__Reserved"));
+
             modelBuilder.Entity<EAMonitorJob>().HasIndex(p => new { p.MonitorId, p.Created });
 #if NET472
             modelBuilder.Query<v_EAMonitor>().ToView("v_EAMonitor");
@@ -75,7 +90,7 @@ namespace EAMonitor
 }
     public class EAMonitorContextSQL : EAMonitorContext
     {
-        private string _conString;
+        private readonly string _conString;
         public EAMonitorContextSQL()
         {
             _conString = Environment.GetEnvironmentVariable("EAMonitor_SQLConnectionString");
@@ -88,7 +103,7 @@ namespace EAMonitor
         {
 
         }
-
+         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -102,7 +117,7 @@ namespace EAMonitor
 
     public class EAMonitorContextSqlite : EAMonitorContext
     {
-        private string _conString;
+        private readonly string _conString;
         public EAMonitorContextSqlite()
         {
             _conString = Environment.GetEnvironmentVariable("EAMonitor_SQLiteConnectionString");
@@ -129,7 +144,7 @@ namespace EAMonitor
 
     public class EAMonitorContextSQLNet47 : EAMonitorContextSQL
     {
-        private string _conString;
+        private readonly string _conString;
         public EAMonitorContextSQLNet47()
         {
             _conString = Environment.GetEnvironmentVariable("EAMonitor_SQLConnectionString");
@@ -155,7 +170,7 @@ namespace EAMonitor
 
     public class EAMonitorContextSqliteNet47 : EAMonitorContextSqlite
     {
-        private string _conString;
+        private readonly string _conString;
         public EAMonitorContextSqliteNet47()
         {
             _conString = Environment.GetEnvironmentVariable("EAMonitor_SQLiteConnectionString");

@@ -1,3 +1,5 @@
+. "$PSScriptRoot\buildModule.ps1"
+
 
 $VerbosePreference = 'Continue'
 $Global:DebugPreference = 'Continue'
@@ -26,8 +28,16 @@ Set-EAMonitorSetting -Key 'SendMailSmtp' -Value 'smtp-relay.sendinblue.com'
 Set-EAMonitorSetting -Key 'SendMailSmtpPort' -Value '587'
 Set-EAMonitorSetting -Key 'SendMailEnableSSl' -Value $true
 Set-EAMonitorSetting -Key 'SendMailCredentials' -Value 'EaMonitorCredentials'
+Set-EAMonitorSetting -Key 'RepeatMinuteInterval' -Value 15
 #$Credential = New-Object System.Management.Automation.PSCredential('ryan2065@gmail.com', (ConvertTo-SecureString $env:smtpkey -AsPlainText -Force) )
 #Set-Secret -Name 'EaMonitorCredentials' -Secret $Credential
 
-$results = Start-EAMonitor -SkipSchedule -PassThru
-$results
+Start-EAMonitor 
+Start-EAMonitor 
+Start-EAMonitor 
+
+Measure-Command {
+    Import-Module "$PSScriptRoot\EAMonitor" -Force -Verbose:$false 
+    Initialize-EAMonitor -SqliteFilePath $SqliteFile -CreateDb -DetectMonitorModules
+    Start-EAMonitor
+}
