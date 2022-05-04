@@ -33,10 +33,6 @@ namespace EAMonitor
 
         public bool Notified { get; set; }
 
-        [ForeignKey("State")]
-        [Required]
-        public int MonitorStateId { get; set; }
-        public EAMonitorState State { get; set; }
 
         [ForeignKey("JobId")]
         public ICollection<EAMonitorJobTest> Tests { get; set; }

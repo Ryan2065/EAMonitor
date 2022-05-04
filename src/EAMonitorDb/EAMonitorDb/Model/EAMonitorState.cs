@@ -13,7 +13,6 @@ namespace EAMonitor
         public EAMonitorState()
         {
             Monitors = new HashSet<EAMonitor>();
-            Jobs = new HashSet<EAMonitorJob>();
         }
 
         [Key]
@@ -27,7 +26,5 @@ namespace EAMonitor
         [ForeignKey("MonitorStateId")]
         public ICollection<EAMonitor> Monitors { get; set; }
 
-        [ForeignKey("MonitorStateId")]
-        public ICollection<EAMonitorJob> Jobs { get; set; }
     }
 }
