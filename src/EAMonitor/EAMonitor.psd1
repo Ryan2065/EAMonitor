@@ -12,7 +12,7 @@
 RootModule = '.\EAMonitor.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1'
+ModuleVersion = '0.0.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -75,7 +75,7 @@ FunctionsToExport = 'Get-EAMonitor', 'Get-EAMonitorEnvironment', 'Get-EAMonitorJ
                'Initialize-EAMonitor', 'Set-EAMonitorSetting', 'Start-EAMonitor'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = 'Get-EAMemoryCacheValue'
+#CmdletsToExport = 'Get-EAMemoryCacheValue'
 
 # Variables to export from this module
 # VariablesToExport = @()
@@ -113,7 +113,7 @@ PrivateData = @{
         # ReleaseNotes = ''
 
         # Prerelease string of this module
-        Prerelease = 'alpha'
+        #Prerelease = 'alpha'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
