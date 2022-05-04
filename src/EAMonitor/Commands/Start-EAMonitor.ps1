@@ -19,13 +19,14 @@ Function Start-EAMonitor {
             'OrderByDescending' = 'Created'
             'Include' = 'Monitor', 'Tests'
             'FromSql' = "
-                SELECT eaj.*
-                FROM EAMonitorJob eaj
-                JOIN (
-                    SELECT eajJoin.MonitorId, MAX(eajJoin.Created)
-                    FROM EAMonitorJob eajJoin
-                    GROUP BY MonitorId) eajMax
-                WHERE eajMax.MonitorId IS NOT NULL
+            SELECT eaj.*
+            FROM EAMonitorJob eaj
+            JOIN (
+                SELECT eajJoin.MonitorId, MAX(eajJoin.Created) Created
+                FROM EAMonitorJob eajJoin
+                GROUP BY MonitorId) eajMax
+            ON eaj.MonitorId = eajMax.MonitorId AND eaj.Created = eajMax.Created
+            WHERE eajMax.MonitorId IS NOT NULL
             "
         }
 

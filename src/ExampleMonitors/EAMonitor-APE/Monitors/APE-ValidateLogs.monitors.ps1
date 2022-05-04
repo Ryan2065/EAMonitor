@@ -45,10 +45,7 @@ BeforeDiscovery{
 }
 
 Describe "APE logs should contain no errors <_.Type>" -ForEach $APEParseResults {
-    Context 'Going one deep'{
         It 'Should contain no error'{
             $_.Type | Should -not -be 3
         }
-    }
-    
 }

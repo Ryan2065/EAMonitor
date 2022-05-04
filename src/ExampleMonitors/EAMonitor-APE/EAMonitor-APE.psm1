@@ -7,17 +7,16 @@ Foreach($c in $Commands){
     . $c.FullName
 }
 
-<#
-Import-EAMonitorScriptBlock -Type ProcessTestData -Name 'WindowsServiceHealthProcessData' -ScriptBlock {
+
+Import-EAMonitorScriptBlock -Type ProcessTestData -Name 'APECheckLogProcessData' -ScriptBlock {
     Param([Pester.Test]$Result)
-    if($Result.Path[-1] -eq 'Automatic service should be running'){
+    if($Result.Path[-1] -eq 'Should contain no error'){
         return [PSCustomObject]@{
-            Computer     = $result.Block.Parent.Data.Computer
-            Service = $result.Block.Data.Name
-            ServiceStatus    = $result.Block.Data.Status
+            DateTime = $result.Block.Parent.Data.DateTime
+            Message     = $result.Block.Parent.Data.Message
         }
     }
 }
-#>
+
 
 Export-ModuleMember -Function $Commands.BaseName

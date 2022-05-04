@@ -27,7 +27,7 @@ Set-EAMonitorSetting -Key 'SendMailTo' -Value 'Ryan@Eph-It.com'
 Set-EAMonitorSetting -Key 'SendMailSmtp' -Value 'smtp-relay.sendinblue.com'
 Set-EAMonitorSetting -Key 'SendMailSmtpPort' -Value '587'
 Set-EAMonitorSetting -Key 'SendMailEnableSSl' -Value $true
-Set-EAMonitorSetting -Key 'SendMailCredentials' -Value 'EaMonitorCredentials'
+Set-EAMonitorSetting -Key 'SendMailCredentials' -Value 'EaMonitorSendMailCredentials'
 Set-EAMonitorSetting -Key 'RepeatMinuteInterval' -Value 15
 Set-EAMonitorSetting -Key 'Enabled' -Value $true
 Set-EAMonitorSetting -Key 'Enabled' -Value $false -MonitorName 'Windows-ServiceHealth'
