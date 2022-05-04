@@ -69,10 +69,10 @@ RequiredModules = @('EFPosh')
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-EAMonitor', 'Get-EAMonitorEnvironment', 'Get-EAMonitorSetting', 
-               'Import-EAMonitor', 'Import-EAMonitorScriptBlock', 
-               'Import-EAMonitorSetting', 'Initialize-EAMonitor', 
-               'Set-EAMonitorSetting', 'Start-EAMonitor'
+FunctionsToExport = 'Get-EAMonitor', 'Get-EAMonitorEnvironment', 'Get-EAMonitorJob', 
+               'Get-EAMonitorSetting', 'Import-EAMonitor', 
+               'Import-EAMonitorScriptBlock', 'Import-EAMonitorSetting', 
+               'Initialize-EAMonitor', 'Set-EAMonitorSetting', 'Start-EAMonitor'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = 'Get-EAMemoryCacheValue'
@@ -113,7 +113,7 @@ PrivateData = @{
         # ReleaseNotes = ''
 
         # Prerelease string of this module
-        # Prerelease = ''
+        Prerelease = 'alpha'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false

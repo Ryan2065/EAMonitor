@@ -1,4 +1,4 @@
-. "$PSScriptRoot\buildModule.ps1"
+#. "$PSScriptRoot\buildModule.ps1"
 
 
 $VerbosePreference = 'Continue'
@@ -29,15 +29,10 @@ Set-EAMonitorSetting -Key 'SendMailSmtpPort' -Value '587'
 Set-EAMonitorSetting -Key 'SendMailEnableSSl' -Value $true
 Set-EAMonitorSetting -Key 'SendMailCredentials' -Value 'EaMonitorCredentials'
 Set-EAMonitorSetting -Key 'RepeatMinuteInterval' -Value 15
+Set-EAMonitorSetting -Key 'Enabled' -Value $true
+Set-EAMonitorSetting -Key 'Enabled' -Value $false -MonitorName 'Windows-ServiceHealth'
 #$Credential = New-Object System.Management.Automation.PSCredential('ryan2065@gmail.com', (ConvertTo-SecureString $env:smtpkey -AsPlainText -Force) )
 #Set-Secret -Name 'EaMonitorCredentials' -Secret $Credential
 
-Start-EAMonitor 
-Start-EAMonitor 
-Start-EAMonitor 
-
-Measure-Command {
-    Import-Module "$PSScriptRoot\EAMonitor" -Force -Verbose:$false 
-    Initialize-EAMonitor -SqliteFilePath $SqliteFile -CreateDb -DetectMonitorModules
-    Start-EAMonitor
-}
+$results = Start-EAMonitor -Passthru 
+$results

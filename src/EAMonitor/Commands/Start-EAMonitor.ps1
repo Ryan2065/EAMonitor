@@ -17,7 +17,7 @@ Function Start-EAMonitor {
             'Entity' = 'EAMonitorJob'
             'FirstOrDefault' = $true
             'OrderByDescending' = 'Created'
-            'Include' = 'Monitor'
+            'Include' = 'Monitor', 'Tests'
             'FromSql' = "
                 SELECT eaj.*
                 FROM EAMonitorJob eaj
@@ -50,10 +50,13 @@ Function Start-EAMonitor {
         $RegisteredMonitorsToRun = New-Object System.Collections.Generic.List[EAMonitor.Classes.EAMonitorRegistered]
     }
     process{
+        $MonitorSettingHash = @{}
+        $MonitorJobHash = @{}
         foreach($ImportedMonitor in $tempImportedMonitors){
             $Settings = Get-EAMonitorSetting -MonitorName $ImportedMonitor.Name -AsHashtable
-            if($true -ne $Settings.Enabled){
+            if('true' -ne $Settings.Enabled){
                 Write-Debug "Monitor $($ImportedMonitor.Name) is not enabled - skipping"
+                continue
             }
             if($SkipSchedule ){
                 Write-Debug "Will run monitor $($ImportedMonitor.Name) - Schedule not evaluated since SkipSchedule was true"
@@ -62,15 +65,17 @@ Function Start-EAMonitor {
             }
             elseif(-not [string]::IsNullOrEmpty($Settings.RepeatMinuteInterval)){
                 $LastRunTime = [DateTIme]::MinValue
+                $LastJob = $null
                 foreach($JobDbRecord in $JobDbRecords){
                     if($JobDbRecord.Monitor.Name -eq $ImportedMonitor.Name){
                         $LastRunTime = $JobDbRecord.Created
+                        $LastJob = $JobRecord
                     }
                 }
                 $RepeatMinuteInterval = $null
                 if([int]::TryParse($Settings.RepeatMinuteInterval, [ref]$RepeatMinuteInterval)){
                     $NextStartTime = $LastRunTime.AddMinutes($RepeatMinuteInterval)
-                    if($NextStartTime -gt [DateTime]::Now){
+                    if($NextStartTime -le [DateTime]::Now){
                         Write-Debug "Will run monitor $($ImportedMonitor.Name)"
                         $RegisteredMonitorsToRun.Add($ImportedMonitor)
                         continue
@@ -97,7 +102,6 @@ Function Start-EAMonitor {
         $PesterConfig.Run.PassThru = $true
         $PesterConfig.Run.TestExtension = 'monitors'
         $results = Invoke-Pester -Path $ScriptFiles -PassThru @PesterParams
-        
     }
     end{
         $EAMonitorResultObjects = ConvertTo-EAMonitorResult -Results $results -Monitors $RegisteredMonitorsToRun -Jobs $Jobs
